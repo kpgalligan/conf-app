@@ -13,14 +13,14 @@ class SignupForm extends React.Component {
             [e.target.name]: e.target.value
         })
     }
-
+    
     handleSubmit = (e) => {
         e.preventDefault()
         // double check address to sign user up
 
         if (this.state.password === this.state.passwordConfirmation) {
             console.log("Sign up successful")
-            // fetch('http://localhost:3000/users', {
+            // fetch(`${process.env.REACT_APP_API_CALL}/users`, {
             //     method: "POST",
             //     headers: {
             //         "Content-Type": "application/json",
