@@ -3,8 +3,7 @@ import React from 'react'
 class LoginForm extends React.Component {
 
     state = {
-        username: "",
-        password: "",
+        email: "",
     }
 
     handleChange = (e) => {
@@ -15,25 +14,15 @@ class LoginForm extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault()
-        // double check address to sign user up
-
-        // if correct password for that user - log the user in
-        if (this.state.password === this.state.passwordConfirmation) {
-            console.log("Sign up successful")
-        
-            let loggedInUser
-            fetch(`${process.env.REACT_APP_API_CALL}/users`)
-                .then(response => response.json())
-                .then(data => {
-                loggedInUser = data.find(user => user.email === this.state.email)
-                // this.props.loginUser(loggedInUser) - method to log in the user and set them as current user
-            })
-            // this.props.navigation.navigate('Dashboard') - add redirect to the next page
-            
-
-        } else {
-            alert("Incorrect password")
-        }
+              
+        let loggedInUser
+        fetch(`${process.env.REACT_APP_API_CALL}/users`)
+            .then(response => response.json())
+            .then(data => {
+            loggedInUser = data.find(user => user.email === this.state.email)
+            this.props.setCurrentUser(loggedInUser)
+        }, () => console.log("Logged in OK!"))
+        // this.props.navigation.navigate('Dashboard') - add redirect to the next page
 
     }
     
@@ -41,8 +30,8 @@ class LoginForm extends React.Component {
         return (
             <div>
                 <form onSubmit={this.handleSubmit}>
-                    <input name="username" value={this.state.username} onChange={this.handleChange} placeholder="username"/>
-                    <input name="password" value={this.state.password} type="password" onChange={this.handleChange} placeholder="password"/>
+                    <input name="email" value={this.state.email} onChange={this.handleChange} placeholder="Email"/>
+                    {/* <input name="password" value={this.state.password} type="password" onChange={this.handleChange} placeholder="password"/> */}
                     <button type="submit">Log In</button>
                 </form>
 
