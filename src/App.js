@@ -15,16 +15,21 @@ class App extends React.Component {
   setCurrentUser = (user) => {
     this.setState({
       currentUser: user
-    }
-    // , () => {this.props.history.push("/profile")}
-     // redirect to the profile page?
+    }, () => {this.props.history.push("/home")}
     )
-   
+  }
+
+  logout = () => {
+    this.setState({
+      currentUser: null
+    }
+    // add redirect to home
+    )
   }
 
   render() {
 
-    console.log(this.props)
+    console.log(this.state)
 
     return (
       <div className="App">
@@ -34,7 +39,7 @@ class App extends React.Component {
               <Switch>
                 <Route path="/signup" render={() => <SignupForm setCurrentUser={this.setCurrentUser} />} />
                 <Route path="/login" render={() => <LoginForm setCurrentUser={this.setCurrentUser}/>} />
-                <Route path="/home" render={() => <MainMenu />} />
+                <Route path="/home" render={(routerProps) => <MainMenu {...routerProps}/>} />
               </Switch>
             </BrowserRouter> 
           </div>

@@ -9,7 +9,6 @@ class SignupForm extends React.Component {
         password: "",
         passwordConfirmation: "",
         twitter_handle: "",
-        
         image_url: "",
         bio: ""
     }
