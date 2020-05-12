@@ -12,18 +12,46 @@ class App extends React.Component {
     currentUser: null
   }
 
-  setCurrentUser = (user) => {
+  componentDidMount() {
+    const token = localStorage.token
+
+    if (token) {
+      fetch(`${process.env.REACT_APP_API_CALL}/auto_login`, {
+        headers: {
+          "Authorization": token
+        }
+      })
+      .then(response => response.json())
+      .then(response => {
+        if (response.errors) {
+          alert(response.errors)
+        } else {
+          this.setState({
+            currentUser: response
+          })
+        }
+      })
+    }
+  }
+
+  setCurrentUser = (response) => {
     this.setState({
-      currentUser: user
-    }, () => {this.props.history.push("/home")}
+      currentUser: response.user
+    }, () => {
+      localStorage.token = response.token
+      this.props.history.push("/home")}
     )
   }
 
   logout = () => {
     this.setState({
       currentUser: null
+    }, () => {
+      localStorage.removeItem("token")
+      // add redirect to home - or maybe login?
+      this.props.history.push("/login")
     }
-    // add redirect to home
+    
     )
   }
 
