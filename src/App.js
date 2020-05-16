@@ -67,7 +67,7 @@ class App extends React.Component {
               <Switch>
                 <Route path="/signup" render={() => <SignupForm setCurrentUser={this.setCurrentUser} />} />
                 <Route path="/login" render={() => <LoginForm setCurrentUser={this.setCurrentUser}/>} />
-                <Route path="/home" render={(routerProps) => <MainMenu {...routerProps}/>} />
+                <Route path="/home" render={(routerProps) => <MainMenu {...routerProps} logout={this.logout}/>} />
               </Switch>
             </BrowserRouter> 
           </div>
