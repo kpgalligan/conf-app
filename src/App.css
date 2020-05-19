@@ -2,23 +2,52 @@
   text-align: center;
 }
 
-
-
-
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* align-items: center; */
   justify-content: flex-start;
   font-size: calc(10px + 2vmin);
   color: white;
 }
 
+.navbar > .top {
+  display: flex;
+  justify-content: space-around;
+  border-bottom-style: solid;
+  border-color: rgba(150,150,150,0.25);
+  border-width: 1px;
+  padding: 10px;
+  padding-left: 15px;
+}
+
+/* .navbar > .bottom {
+  display: flex;
+  width: 100%;
+  padding: 5px;
+  padding-left: 15vw;
+} */
+
+.navbar {
+  width: 100%;
+}
+
+.main {
+  align-items: center;
+}
+
 .main_menu_list {
+  align-items: center;
+  max-width: 20vmax;
+}
+
+.main_menu > .main_menu_list {
+  align-items: center;
   padding: 5pt;
   border-style: dashed;
   border-width: 2pt;
   border-color: #ffffff;
 }
+

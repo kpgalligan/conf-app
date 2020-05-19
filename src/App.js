@@ -4,6 +4,8 @@ import './App.css';
 import MainMenu from './components/mainMenu'
 import SignupForm from './components/SignupForm'
 import LoginForm from './components/LoginForm'
+import NavBar from './components/NavBar';
+import EditProfile from './components/EditProfile';
 
 
 class App extends React.Component {
@@ -57,14 +59,18 @@ class App extends React.Component {
 
   render() {
 
-    console.log(this.state)
+    // console.log("App props: ", this.props)
 
     return (
       <div className="App">
         <header className="App-header">
           <div>
             <BrowserRouter>
+          
+            <NavBar currentUser={this.state.currentUser} />
               <Switch>
+                <Route path="editprofile" render={(routerProps) =>  <EditProfile {...routerProps} history={this.props.history} currentUser={this.state.currentUser} /> } />
+              
                 <Route path="/signup" render={() => <SignupForm setCurrentUser={this.setCurrentUser} />} />
                 <Route path="/login" render={() => <LoginForm setCurrentUser={this.setCurrentUser}/>} />
                 <Route path="/home" render={(routerProps) => <MainMenu {...routerProps} logout={this.logout}/>} />
