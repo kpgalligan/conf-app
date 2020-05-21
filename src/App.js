@@ -1,11 +1,12 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import './App.css';
 import MainMenu from './components/mainMenu'
 import SignupForm from './components/SignupForm'
 import LoginForm from './components/LoginForm'
 import NavBar from './components/NavBar';
-import EditProfile from './components/EditProfile';
+import Profile from './components/Profile';
+import Schedule from './components/Schedule';
 
 
 class App extends React.Component {
@@ -65,18 +66,16 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header">
           <div>
-            <BrowserRouter>
-          
-            {/* <NavBar currentUser={this.state.currentUser} /> */}
-            <NavBar render={(props) => {props}} />
+            <Router>
+            <NavBar currentUser={this.state.currentUser} logout={this.logout}/>
               <Switch>
-                <Route path="editprofile" render={(routerProps) =>  <EditProfile {...routerProps} history={this.props.history} currentUser={this.state.currentUser} /> } />
-              
+                <Route path="/home" render={(routerProps) => <MainMenu {...routerProps} logout={this.logout}/>} />
                 <Route path="/signup" render={() => <SignupForm setCurrentUser={this.setCurrentUser} />} />
                 <Route path="/login" render={() => <LoginForm setCurrentUser={this.setCurrentUser}/>} />
-                <Route path="/home" render={(routerProps) => <MainMenu {...routerProps} logout={this.logout}/>} />
+                <Route path="/schedule" render={() => <Schedule />} />
+                <Route path="/profile" render={(props) =>  <Profile {...props} history={this.props.history} currentUser={this.state.currentUser} setCurrentUser={this.setCurrentUser}/> } />
               </Switch>
-            </BrowserRouter> 
+            </Router> 
           </div>
         </header>
       </div>

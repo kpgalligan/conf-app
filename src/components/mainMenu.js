@@ -1,5 +1,4 @@
 import React from 'react';
-// import '../App.css';
 
 class MainMenu extends React.Component {
 
@@ -12,10 +11,7 @@ class MainMenu extends React.Component {
                     <div className='main_menu_list'>Schedule</div>
                     <div className='main_menu_list'>Floor Plan</div>
                     <div className='main_menu_list'>Lounge</div>
-                </div>
-                <br></br>
-                <br></br>
-                <button className='main_menu_list' onClick={this.props.logout}> Log Out </button>
+                </div>    
             </div>
         ) 
     }

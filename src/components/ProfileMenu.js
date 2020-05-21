@@ -1,11 +1,18 @@
 import React from 'react'
-import EditProfile from './EditProfile'
+import { NavLink } from 'react-router-dom'
+
+const link = {
+    width: '100px',
+    // padding: '12px',
+    // margin: '0 6px 6px',
+    color: 'white',
+    align: 'left'
+  }
 
 class ProfileMenu extends React.Component {
 
     state = {
-        displayMenu: false,
-        // editMode: false
+        displayMenu: false
     }
 
     toggleDisplayMenu = () => {
@@ -14,16 +21,10 @@ class ProfileMenu extends React.Component {
         })
     }
 
-    // toggleEditMode = () => {
-    //     this.setState({
-    //         editMode: !this.state.editMode
-    //     })
-    //     console.log("Entering edit mode")
-    // }
 
     render () {
 
-        // console.log("Profile Menu props: ", this.props)
+        // console.log(this.props)
 
         return (
             <div className="dropdown">
@@ -34,10 +35,9 @@ class ProfileMenu extends React.Component {
                 {
                     this.state.displayMenu ? 
                     <>
-                        <button> <EditProfile currentUser={this.props.currentUser} {...this.props}/> </button><br></br>
-                        {/* <button onClick={this.toggleEditMode}>Edit Profile</button><br></br> */}
-                        
-                        <button>Log Out</button>
+                        <NavLink to="/profile" style={link}>Profile</NavLink>
+                        <br></br>
+                        <button onClick={this.props.logout}>Log Out</button>
                     </> : null
                 }
             </div>
