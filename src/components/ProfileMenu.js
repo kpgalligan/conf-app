@@ -4,7 +4,8 @@ import EditProfile from './EditProfile'
 class ProfileMenu extends React.Component {
 
     state = {
-        displayMenu: false
+        displayMenu: false,
+        // editMode: false
     }
 
     toggleDisplayMenu = () => {
@@ -13,9 +14,16 @@ class ProfileMenu extends React.Component {
         })
     }
 
+    // toggleEditMode = () => {
+    //     this.setState({
+    //         editMode: !this.state.editMode
+    //     })
+    //     console.log("Entering edit mode")
+    // }
+
     render () {
 
-        // console.log(this.props)
+        // console.log("Profile Menu props: ", this.props)
 
         return (
             <div className="dropdown">
@@ -27,6 +35,8 @@ class ProfileMenu extends React.Component {
                     this.state.displayMenu ? 
                     <>
                         <button> <EditProfile currentUser={this.props.currentUser} {...this.props}/> </button><br></br>
+                        {/* <button onClick={this.toggleEditMode}>Edit Profile</button><br></br> */}
+                        
                         <button>Log Out</button>
                     </> : null
                 }

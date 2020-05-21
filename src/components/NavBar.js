@@ -3,6 +3,8 @@ import ProfileMenu from './ProfileMenu'
 
 function NavBar(props) {
 
+    console.log("Navbar Props: ", props)
+
     return(
         <div className="navbar">
 

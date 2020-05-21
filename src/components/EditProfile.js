@@ -4,7 +4,7 @@ class EditProfile extends React.Component {
 
     render() {
 
-        console.log("Edit profile: ", this.props)
+        // console.log("Edit profile props: ", this.props)
 
         return (
             <div >Edit Profile</div>
