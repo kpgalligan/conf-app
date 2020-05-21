@@ -67,7 +67,8 @@ class App extends React.Component {
           <div>
             <BrowserRouter>
           
-            <NavBar currentUser={this.state.currentUser} />
+            {/* <NavBar currentUser={this.state.currentUser} /> */}
+            <NavBar render={(props) => {props}} />
               <Switch>
                 <Route path="editprofile" render={(routerProps) =>  <EditProfile {...routerProps} history={this.props.history} currentUser={this.state.currentUser} /> } />
               
