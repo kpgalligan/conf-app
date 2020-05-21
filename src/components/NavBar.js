@@ -1,19 +1,28 @@
 import React from 'react'
 import ProfileMenu from './ProfileMenu'
+import { NavLink } from 'react-router-dom'
+
+const link = {
+    width: '100px',
+    // padding: '12px',
+    // margin: '0 6px 6px',
+    color: 'white',
+    align: 'left'
+  }
 
 function NavBar(props) {
-
-    console.log("Navbar Props: ", props)
 
     return(
         <div className="navbar">
 
-            <div className="top">
-                <h5>Conference Name</h5>
-                <h5><ProfileMenu currentUser={props.currentUser}/> </h5>
-            </div>
+            <NavLink to="/home" style={link}>Home</NavLink>
+            <NavLink to="/schedule" style={link}>Schedule</NavLink>
 
-            {/* <div className="bottom"></div> */}
+            {
+                props.currentUser ? <ProfileMenu currentUser={props.currentUser} logout={props.logout}/> :
+                <NavLink to="/login" style={link}>Log In</NavLink>
+            }
+           
         </div>
     )
 }

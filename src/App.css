@@ -13,7 +13,7 @@
   color: white;
 }
 
-.navbar > .top {
+.navbar {
   display: flex;
   justify-content: space-around;
   border-bottom-style: solid;
@@ -23,12 +23,7 @@
   padding-left: 15px;
 }
 
-/* .navbar > .bottom {
-  display: flex;
-  width: 100%;
-  padding: 5px;
-  padding-left: 15vw;
-} */
+
 
 .navbar {
   width: 100%;

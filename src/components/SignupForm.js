@@ -53,7 +53,6 @@ class SignupForm extends React.Component {
         } else {
             alert("Passwords don't match")
         }
-
     }
     
     render () {
