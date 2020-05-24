@@ -1352,18 +1352,6 @@
   dependencies:
     "@hapi/hoek" "^8.3.0"
 
-"@ion-phaser/core@^1.2.3":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@ion-phaser/core/-/core-1.2.3.tgz#6e08296c16f2d5a9d7713fc3db41637270393da9"
-  integrity sha512-45TKHaW2OijqN3zGr7WUt2IPW6l0yu/MUYw8fX6qArBOmashxLFmhIQMz4A7KDMGkRX9uukLrBrnkfyc1tZp9Q==
-
-"@ion-phaser/react@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@ion-phaser/react/-/react-1.2.2.tgz#431900aefce6a0c2f29e4c9f1ff2b2306f21f929"
-  integrity sha512-wDcWM+tiNkNtY5jJDzVckJ/KE5l0V676Gaz6t6ihCDg31+HtUfugUdytPZBBqXgD6Pa7xbjqzY9C/8QfKFkWtQ==
-  dependencies:
-    "@ion-phaser/core" "^1.2.3"
-
 "@jest/console@^24.7.1", "@jest/console@^24.9.0":
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-24.9.0.tgz#79b1bc06fb74a8cfb01cbdedf945584b1b9707f0"
