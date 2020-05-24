@@ -7,6 +7,8 @@ import LoginForm from './components/LoginForm'
 import NavBar from './components/NavBar';
 import Profile from './components/Profile';
 import Schedule from './components/Schedule';
+import ConferenceGame from './components/ConferenceGame';
+import PhaserTest from "./components/PhaserTest";
 
 
 class App extends React.Component {
@@ -72,6 +74,7 @@ class App extends React.Component {
                 <Route path="/home" render={(routerProps) => <MainMenu {...routerProps} logout={this.logout}/>} />
                 <Route path="/signup" render={() => <SignupForm setCurrentUser={this.setCurrentUser} />} />
                 <Route path="/login" render={() => <LoginForm setCurrentUser={this.setCurrentUser}/>} />
+                <Route path="/confgame" render={() => <ConferenceGame />} />
                 <Route path="/schedule" render={() => <Schedule />} />
                 <Route path="/profile" render={(props) =>  <Profile {...props} history={this.props.history} currentUser={this.state.currentUser} setCurrentUser={this.setCurrentUser}/> } />
               </Switch>
