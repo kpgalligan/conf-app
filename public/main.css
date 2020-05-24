@@ -1,0 +1,14 @@
+
+#chatContainer {
+    width: calc(100% - 1220px);
+}
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: stretch;
+}
+
+.flex-container > div {
+    background-color: #f1f1f1;
+}

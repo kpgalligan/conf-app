@@ -5,34 +5,6 @@ import {Client,Message, Stomp} from "@stomp/stompjs";
 import Phaser from 'phaser'
 
 class ConferenceGame extends Component {
-    /*state = {
-        initialize: true,
-        game: {
-            type: Phaser.AUTO,
-            mode: Phaser.Scale.FIT,
-            autoCenter: Phaser.Scale.CENTER_BOTH,
-            width: "100%",
-            height: "100%",
-            // zoom: 2,
-            pixelArt: true,
-            physics: {
-                default: 'arcade',
-                arcade: {
-                    gravity: {
-                        y: 0
-                    },
-                    debug: true // set to true to view zones
-                }
-            },
-            scene: [
-                BootScene/!*,
-                WorldSceneFirst,
-                WorldSceneChat,
-                WorldSceneSecret,
-                WorldSceneVip*!/
-            ]
-        }
-    }*/
     config = {
         type: Phaser.AUTO,
         parent: "phaser-game",
@@ -78,14 +50,6 @@ class ConferenceGame extends Component {
     };
 
     componentDidMount() {
-        /*const config = {
-            type: Phaser.AUTO,
-            width: GAME_WIDTH,
-            height: GAME_HEIGHT,
-            parent: "phaser-game",
-            scene: [ExampleScene]
-        };*/
-
         new Phaser.Game(this.config);
     }
 
@@ -94,7 +58,17 @@ class ConferenceGame extends Component {
     }
 
     render() {
-        return <div id="phaser-game" />;
+        return (
+            <div className="flex-container">
+                <div id="phaser-game" />
+                <div id="chatContainer">
+                    <div className="chatArea">
+                        <ul id="messages" className="messages"></ul>
+                    </div>
+                    <input id="inputMessage" className="inputMessage" placeholder="Type here..." type="text"/>
+                </div>
+            </div>
+        )
     }
 }
 
