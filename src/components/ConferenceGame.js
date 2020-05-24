@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 
 import SockJS from 'sockjs-client'
-import {Client,Message} from "@stomp/stompjs";
+import {Client,Message, Stomp} from "@stomp/stompjs";
 import Phaser from 'phaser'
-import {IonPhaser} from "@ion-phaser/react";
 
 class ConferenceGame extends Component {
-    state = {
+    /*state = {
         initialize: true,
         game: {
             type: Phaser.AUTO,
@@ -26,93 +25,82 @@ class ConferenceGame extends Component {
                 }
             },
             scene: [
-                new BootScene(),
-                new WorldScene(
-                    "firstWorld",
-                    "map",
-                    false),
-                new WorldScene(
-                    "chatWorld",
-                    "chatRoomMap",
-                    false),
-                new WorldScene(
-                    "secretRoom",
-                    "secretRoomMap",
-                    false),
-                new WorldScene(
-                    "vipRoom",
-                    "vipRoomMap",
-                    false)
-
+                BootScene/!*,
+                WorldSceneFirst,
+                WorldSceneChat,
+                WorldSceneSecret,
+                WorldSceneVip*!/
             ]
         }
+    }*/
+    config = {
+        type: Phaser.AUTO,
+        parent: "phaser-game",
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 1050, // Canvas width in pixels
+        height: 800, // Canvas height in pixels
+        // zoom: 2,
+        pixelArt: true,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: {
+                    y: 0
+                },
+                debug: true // set to true to view zones
+            }
+        },
+        scene: [
+            BootScene,
+            new WorldScene(
+                "firstWorld",
+                "map",
+                false,
+                this),
+            new WorldScene(
+                "chatWorld",
+                "chatRoomMap",
+                false,
+                this),
+            new WorldScene(
+                "secretRoom",
+                "secretRoomMap",
+                false,
+                this),
+            new WorldScene(
+                "vipRoom",
+                "vipRoomMap",
+                false,
+                this)
+
+        ]
+    };
+
+    componentDidMount() {
+        /*const config = {
+            type: Phaser.AUTO,
+            width: GAME_WIDTH,
+            height: GAME_HEIGHT,
+            parent: "phaser-game",
+            scene: [ExampleScene]
+        };*/
+
+        new Phaser.Game(this.config);
     }
 
+    shouldComponentUpdate() {
+        return false;
+    }
 
     render() {
-        console.log("dude")
-        const { initialize, game } = this.state
-        return (
-            <div>Farts</div>
-            // <IonPhaser game={game} initialize={initialize} />
-        )
+        return <div id="phaser-game" />;
     }
 }
-
-// const inputMessage = document.getElementById('inputMessage');
-// const messages = document.getElementById('messages');
-
-/*window.addEventListener('keydown', event => {
-    if (event.which === 13) {
-        sendMessage();
-        inputMessage.blur()
-        console.log("event a")
-    } else if (event.which === 9) {
-        inputMessage.blur()
-        event.stopPropagation()
-        console.log("event b")
-    } else if (
-        (event.which === 27)
-        ||
-        (event.which >= 37 && event.which <= 40)
-    ) {
-        inputMessage.blur()
-        console.log("event c")
-    } else if (
-        ((event.which >= 45 && event.which < 91) || (event.which > 92 && event.which <= 111))
-        ||
-        (event.which >= 160 && event.which <= 176)
-        ||
-        (event.which >= 188 && event.which <= 222)
-        // ||
-        // (event.which >= 16 && event.which <= 20)
-        // ||
-        // (event.which >= 91 && event.which <= 92)
-        ||
-        (event.which === 32)
-    ) {
-        inputMessage.focus()
-        typing()
-        console.log("event d")
-    } else {
-        // inputMessage.blur()
-        console.log("event e")
-    }
-});*/
-
-/*function sendMessage() {
-    let message = inputMessage.value;
-    if (message) {
-        callSendMessage(message)
-    }
-}*/
 
 let callSendMessage = (message) => {
     console.log("Can't send now: " + message)
 }
-
-// inputMessage.onfocus = () => imTalkin()
-// inputMessage.onblur = () => imNotTalkin()
 
 let imTalkin = () => {
 
@@ -144,7 +132,7 @@ function showMessage(message) {
 
 class BootScene extends Phaser.Scene {
     constructor() {
-        console.log("arstrarast")
+        console.log("a 1")
         super({
             key: 'BootScene',
             active: true
@@ -152,7 +140,7 @@ class BootScene extends Phaser.Scene {
     }
 
     preload() {
-        console.log("dude2")
+        console.log("a 2")
         this.load.plugin('rexcirclemaskimageplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexcirclemaskimageplugin.min.js', true);
 
         // map tiles
@@ -201,7 +189,9 @@ class BootScene extends Phaser.Scene {
     }
 
     create() {
-        console.log("ggggggg")
+        console.log("a 3")
+
+
         this.scene.start('firstWorld');
     }
 }
@@ -213,12 +203,14 @@ class WorldSceneCollide {
     }
 }
 
+
 class WorldScene extends Phaser.Scene {
 
-    constructor(sceneKey, mapKey, backOnBounds) {
+    constructor(sceneKey, mapKey, backOnBounds, appContext) {
         super({
             key: sceneKey
         });
+        this.appContext = appContext
         this.worldKey = sceneKey
         this.mapKey = mapKey
         this.backOnBounds = backOnBounds
@@ -259,50 +251,24 @@ class WorldScene extends Phaser.Scene {
     }
 
     connectHeaders(playerX, playerY) {
+        console.log("Connecting: ", this.appContext.props.profileUsername)
         return {
             worldKey: this.worldKey,
             playerX: playerX,
             playerY: playerY,
-            profileUsername: profileUsername
+            profileUsername: this.appContext.props.profileUsername
         }
     }
 
-    createStompClient() {
-        const client = new Client({
-            webSocketFactory: function () {
-                // Note that the URL is different from the WebSocket URL
-                return new SockJS("http://192.168.2.190:8080/gs-guide-websocket");
-            },
-            // brokerURL: "ws://localhost:15674/ws",
-            connectHeaders: this.connectHeaders(this.currentX, this.currentY),
-            debug: function (str) {
-                console.log(str);
-            },
-            reconnectDelay: 5000,
-            heartbeatIncoming: 4000,
-            heartbeatOutgoing: 4000
-        });
-
-        // Fallback code
-        // if (typeof WebSocket !== 'function') {
-        //     // For SockJS you need to set a factory that creates a new SockJS instance
-        //     // to be used for each (re)connect
-        //     client.webSocketFactory = function () {
-        //         // Note that the URL is different from the WebSocket URL
-        //         return new SockJS("http://localhost:15674/stomp");
-        //     };
-        // }
-
-        return client
-    }
     sockJsConnect() {
         let socket = new SockJS('http://192.168.2.190:8080/gs-guide-websocket');
-        this.stompClient = this.createStompClient()
+        this.stompClient = Stomp.over(socket)
+
         // this.stompClient.debug = null
-        /*let headers = this.connectHeaders(this.currentX, this.currentY);
+        let headers = this.connectHeaders(this.currentX, this.currentY);
         console.log("sockJsConnect")
-        console.log(headers)*/
-        this.stompClient.connect(function (frame) {
+        console.log(headers)
+        this.stompClient.connect(headers, function (frame) {
             // setConnected(true);
             console.log('Connected: ' + frame);
             this.stompUserId = frame['headers']['user-name']
@@ -359,7 +325,7 @@ class WorldScene extends Phaser.Scene {
                 const playerInfo = this.allPlayers[sentMessage.playerId]
 
                 const img = document.createElement('img');
-                img.src = userProfiles[playerInfo.profileUsername].profile
+                img.src = this.findPlayerImageUrl(playerInfo)
 
                 // const usernameText = document.createTextNode(sentMessage.playerId);
                 // usernameSpan.className = 'username';
@@ -454,6 +420,7 @@ class WorldScene extends Phaser.Scene {
     }
 
     create(data) {
+        console.log("WorldScene")
         this.isDone = false
 
         if (!this.music) {
@@ -779,28 +746,7 @@ class WorldScene extends Phaser.Scene {
         this.chatBubble.visible = false
         this.chatBubble.setDepth(1550)
 
-        const addHead = () => {
-            this.icon = this.add.rexCircleMaskImage(0, -20, playerInfo.profileUsername)
-            this.icon.width = 20
-            this.icon.height = 20
-            this.container.add(this.icon)
-            this.container.remove(this.chatBubble)
-            this.container.add(this.chatBubble)
-        }
-
-        if (this.textures.exists(playerInfo.profileUsername)) {
-            addHead()
-        } else {
-            let profileImage = userProfiles[playerInfo.profileUsername].profile
-            const loader = this.load.image(playerInfo.profileUsername, profileImage)
-            loader.start()
-
-            loader.on('filecomplete', function (key, file) {
-                if (key === playerInfo.profileUsername) {
-                    addHead()
-                }
-            }, this);
-        }
+        this.addPlayerHead(this.container, playerInfo, this.chatBubble)
 
         // update camera
         this.updateCamera();
@@ -838,6 +784,35 @@ class WorldScene extends Phaser.Scene {
         }
     }
 
+    findPlayerImageUrl(playerInfo){
+        return userProfiles[playerInfo.profileUsername].profile
+    }
+
+    addPlayerHead(container, playerInfo, chatBubble){
+        const addHead = () => {
+            const icon = this.add.rexCircleMaskImage(0, -20, playerInfo.profileUsername)
+            icon.width = 20
+            icon.height = 20
+            container.add(icon)
+            container.remove(chatBubble)
+            container.add(chatBubble)
+        }
+
+        if (this.textures.exists(playerInfo.profileUsername)) {
+            addHead()
+        } else {
+            let profileImage = this.findPlayerImageUrl(playerInfo)
+            const loader = this.load.image(playerInfo.profileUsername, profileImage)
+            loader.start()
+
+            loader.on('filecomplete', function (key, file) {
+                if (key === playerInfo.profileUsername) {
+                    addHead()
+                }
+            }, this);
+        }
+    }
+
     addOtherPlayers(playerInfo) {
         let container = this.add.container(playerInfo.x, playerInfo.y);
         container.setSize(32, 32);
@@ -856,28 +831,7 @@ class WorldScene extends Phaser.Scene {
         container.player = otherPlayer
         container.chatBubble = chatBubble
 
-        const addHead = () => {
-            const icon = this.add.rexCircleMaskImage(0, -20, playerInfo.profileUsername)
-            icon.width = 20
-            icon.height = 20
-            container.add(icon)
-            container.remove(chatBubble)
-            container.add(chatBubble)
-        }
-
-        if (this.textures.exists(playerInfo.profileUsername)) {
-            addHead()
-        } else {
-            let profileImage = userProfiles[playerInfo.profileUsername].profile
-            const loader = this.load.image(playerInfo.profileUsername, profileImage)
-            loader.start()
-
-            loader.on('filecomplete', function (key, file) {
-                if (key === playerInfo.profileUsername) {
-                    addHead()
-                }
-            }, this);
-        }
+        this.addPlayerHead(container, playerInfo, chatBubble)
 
         container.showTyping = float(
             () => {
@@ -1070,7 +1024,6 @@ const userProfiles = {
         role: "attendee"
     }
 }
-const profileUsername = twitterUsernames[Math.floor(twitterUsernames.length * Math.random())]
 function firstPause(func, pauseTime) {
     let lastCall = 0
     return function () {
