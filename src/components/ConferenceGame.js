@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import SockJS from 'sockjs-client'
-import {Client,Message, Stomp} from "@stomp/stompjs";
+import {Stomp} from "@stomp/stompjs";
 import Phaser from 'phaser'
 
 class ConferenceGame extends Component {
@@ -50,24 +50,28 @@ class ConferenceGame extends Component {
     };
 
     componentDidMount() {
-        new Phaser.Game(this.config);
+        this.game = new Phaser.Game(this.config);
+        this.props.sendMessageCallback.callback = (m)=>{
+            callSendMessage(m)
+        }
     }
 
-    shouldComponentUpdate() {
+    shouldComponentUpdate(nextProps) {
+        if(this.game) {
+            this.game.scene.getScenes(true).forEach((scene) => {
+                if (nextProps.talking && scene.imTalkin)
+                    scene.imTalkin()
+                if (!nextProps.talking && scene.imNotTalkin)
+                    scene.imNotTalkin()
+            })
+
+        }
         return false;
     }
 
     render() {
         return (
-            <div className="flex-container">
-                <div id="phaser-game" />
-                <div id="chatContainer">
-                    <div className="chatArea">
-                        <ul id="messages" className="messages"></ul>
-                    </div>
-                    <input id="inputMessage" className="inputMessage" placeholder="Type here..." type="text"/>
-                </div>
-            </div>
+            <div id="phaser-game" />
         )
     }
 }
@@ -106,7 +110,6 @@ function showMessage(message) {
 
 class BootScene extends Phaser.Scene {
     constructor() {
-        console.log("a 1")
         super({
             key: 'BootScene',
             active: true
@@ -114,7 +117,6 @@ class BootScene extends Phaser.Scene {
     }
 
     preload() {
-        console.log("a 2")
         this.load.plugin('rexcirclemaskimageplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexcirclemaskimageplugin.min.js', true);
 
         // map tiles
@@ -163,9 +165,6 @@ class BootScene extends Phaser.Scene {
     }
 
     create() {
-        console.log("a 3")
-
-
         this.scene.start('firstWorld');
     }
 }
@@ -225,7 +224,6 @@ class WorldScene extends Phaser.Scene {
     }
 
     connectHeaders(playerX, playerY) {
-        console.log("Connecting: ", this.appContext.props.profileUsername)
         return {
             worldKey: this.worldKey,
             playerX: playerX,
@@ -240,11 +238,7 @@ class WorldScene extends Phaser.Scene {
 
         // this.stompClient.debug = null
         let headers = this.connectHeaders(this.currentX, this.currentY);
-        console.log("sockJsConnect")
-        console.log(headers)
         this.stompClient.connect(headers, function (frame) {
-            // setConnected(true);
-            console.log('Connected: ' + frame);
             this.stompUserId = frame['headers']['user-name']
 
             this.stompClient.subscribe('/user/topic/currentPlayers/' + this.worldKey, function (msg) {
@@ -295,27 +289,11 @@ class WorldScene extends Phaser.Scene {
 
             this.stompClient.subscribe('/user/topic/hearMessage/' + this.worldKey, function (msg) {
                 let sentMessage = JSON.parse(msg.body)
-                const usernameSpan = document.createElement('span');
                 const playerInfo = this.allPlayers[sentMessage.playerId]
 
-                const img = document.createElement('img');
-                img.src = this.findPlayerImageUrl(playerInfo)
-
-                // const usernameText = document.createTextNode(sentMessage.playerId);
-                // usernameSpan.className = 'username';
-                usernameSpan.appendChild(img);
-
-                const messageBodySpan = document.createElement('span');
-                const messageBodyText = document.createTextNode(sentMessage.message);
-                messageBodySpan.className = 'messageBody';
-                messageBodySpan.appendChild(messageBodyText);
-
-                const messageLi = document.createElement('li');
-                messageLi.setAttribute('username', sentMessage.playerId);
-                messageLi.append(usernameSpan);
-                messageLi.append(messageBodySpan);
-
-                addMessageElement(messageLi);
+                this.appContext.props.showMessage(
+                    sentMessage,
+                    playerInfo)
             }.bind(this));
 
             callSendMessage = function (message) {
@@ -323,6 +301,7 @@ class WorldScene extends Phaser.Scene {
             }.bind(this)
 
             imTalkin = function () {
+                this.input.keyboard.enabled = false
                 this.talkRadius.visible = true
                 this.chatBubble.visible = true
                 // inputMessage.style.readOnly = false
@@ -330,6 +309,7 @@ class WorldScene extends Phaser.Scene {
             }.bind(this)
 
             imNotTalkin = function () {
+                this.input.keyboard.enabled = true
                 this.talkRadius.visible = false
                 this.chatBubble.visible = false
                 // inputMessage.value = ""
@@ -366,6 +346,18 @@ class WorldScene extends Phaser.Scene {
         }.bind(this));
     }
 
+    imTalkin = function () {
+        this.talkRadius.visible = true
+        this.chatBubble.visible = true
+    }.bind(this)
+
+    imNotTalkin = function () {
+        this.talkRadius.visible = false
+        this.chatBubble.visible = false
+        this.stompClient.send("/app/doneTyping", this.worldKeyHeader(), "")
+        cancelTyping()
+    }.bind(this)
+
     playerMovement(x, y, flipX) {
         this.currentX = x
         this.currentY = y
@@ -394,7 +386,15 @@ class WorldScene extends Phaser.Scene {
     }
 
     create(data) {
-        console.log("WorldScene")
+        this.input.keyboard.on('keydown', event => {
+            switch (event.key) {
+                case ' ':
+                    this.appContext.props.startTalking()
+                    break;
+                default:
+            }
+        });
+
         this.isDone = false
 
         if (!this.music) {
@@ -433,7 +433,13 @@ class WorldScene extends Phaser.Scene {
         this.createAnimations();
 
         // user input
-        this.cursors = this.input.keyboard.createCursorKeys();
+
+        this.cursors = {
+            left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
+            right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
+            up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
+            down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
+        };
     }
 
     createMap() {
@@ -494,17 +500,10 @@ class WorldScene extends Phaser.Scene {
         })
 
         dancerPoints.forEach((pt) => this.makeDancer(pt))
-
         sponsorTouchBoxes.forEach((s) => this.makeSponsorBox(s))
-
         chatNodes.forEach((obj) => this.makeChatNode(obj))
-
         textSignBoxes.forEach((obj) => this.makeTextSignTrigger(obj))
-
         worldChangeBoxes.forEach((obj) => this.makeWorldChangeBox(obj))
-        // chatNodes.forEach((obj) => console.log("Heyo", obj))
-        // const sponserPoint = this.map.findObject("Objects", obj => obj.name === "Sponsor 1");
-
     }
 
     makeDancer(pt) {
@@ -529,7 +528,7 @@ class WorldScene extends Phaser.Scene {
         sbBox.setSize(sb.width, sb.height);
         // this.physics.world.enable(sbBox);
         this.addCollide(sbBox, () => {
-            const prop = this.findProperty(sb, "access")
+            /*const prop = this.findProperty(sb, "access")
             if (prop) {
                 const roles = prop.value.split(",")
                 if(!roles.includes(userProfiles[this.myPlayerInfo().profileUsername].role))
@@ -537,7 +536,7 @@ class WorldScene extends Phaser.Scene {
                     showMessage("No access")
                     return
                 }
-            }
+            }*/
             this.showWorld(sb.name, true)
         })
     }
@@ -736,7 +735,6 @@ class WorldScene extends Phaser.Scene {
 
                     if (!this.container.areaTouching) {
                         this.container.areaTouching = true
-                        console.log("Hey table")
                         cl.callback()
                     }
                 }
@@ -747,19 +745,12 @@ class WorldScene extends Phaser.Scene {
             collider.overlapOnly = true
         })
 
-        console.log("WorldScene createPlayer a " + this.worldKey)
         if (this.backOnBounds) {
-            console.log("WorldScene createPlayer b " + this.worldKey)
             this.container.body.onWorldBounds = true;
             this.physics.world.on('worldbounds', function (body) {
-                console.log("WorldScene worldbounds " + this.worldKey)
                 this.backWorld()
             }.bind(this), this);
         }
-    }
-
-    findPlayerImageUrl(playerInfo){
-        return userProfiles[playerInfo.profileUsername].profile
     }
 
     addPlayerHead(container, playerInfo, chatBubble){
@@ -775,7 +766,7 @@ class WorldScene extends Phaser.Scene {
         if (this.textures.exists(playerInfo.profileUsername)) {
             addHead()
         } else {
-            let profileImage = this.findPlayerImageUrl(playerInfo)
+            let profileImage = this.appContext.props.findPlayerImageUrl(playerInfo)
             const loader = this.load.image(playerInfo.profileUsername, profileImage)
             loader.start()
 
@@ -831,8 +822,6 @@ class WorldScene extends Phaser.Scene {
         }
 
         this.otherPlayers.add(container);
-        console.log("Adding other player")
-        console.log(playerInfo)
         this.otherPlayers[playerInfo.playerId] = container
     }
 
@@ -844,7 +833,6 @@ class WorldScene extends Phaser.Scene {
     }
 
     doneTouching() {
-        console.log("doneTouching")
         this.container.areaTouching = false
         if (this.container.onDoneTouching) {
             this.container.onDoneTouching()
@@ -881,14 +869,18 @@ class WorldScene extends Phaser.Scene {
 
             // Update the animation last and give left/right animations precedence over up/down animations
             if (this.cursors.left.isDown) {
+                this.appContext.props.cancelTalking()
                 this.player.anims.play('left', true);
                 this.player.flipX = true;
             } else if (this.cursors.right.isDown) {
+                this.appContext.props.cancelTalking()
                 this.player.anims.play('right', true);
                 this.player.flipX = false;
             } else if (this.cursors.up.isDown) {
+                this.appContext.props.cancelTalking()
                 this.player.anims.play('up', true);
             } else if (this.cursors.down.isDown) {
+                this.appContext.props.cancelTalking()
                 this.player.anims.play('down', true);
             } else {
                 this.player.anims.stop();
@@ -945,8 +937,6 @@ class WorldScene extends Phaser.Scene {
         if (!this.isDone) {
             this.isDone = true
             let worldInfo = worldStack.pop()
-            console.log("Go show")
-            console.log(worldInfo)
             this.shutDown()
             this.scene.start(worldInfo.key);
         }
@@ -964,40 +954,7 @@ const twitterUsernames = [
     "jessewilson",
     "dN0t"
 ]
-const userProfiles = {
-    miss_cheese: {
-        profile: "https://pbs.twimg.com/profile_images/1058805611356254208/WWltCPZP_normal.jpg",
-        role: "attendee"
-    },
-    kpgalligan: {
-        profile: "https://pbs.twimg.com/profile_images/1245852692523683840/ixZ6S5RX_normal.jpg",
-        role: "speaker"
-    },
-    TouchlabHQ: {
-        profile: "https://pbs.twimg.com/profile_images/1145706250635808768/hd9OurrF_normal.png",
-        role: "attendee"
-    },
-    chislett: {
-        profile: "https://pbs.twimg.com/profile_images/514827467203162115/GLgP3dIE_normal.jpeg",
-        role: "host"
-    },
-    treelzebub: {
-        profile: "https://pbs.twimg.com/profile_images/1014302182395412480/j6SoxgVu_normal.jpg",
-        role: "attendee"
-    },
-    chethaase: {
-        profile: "https://pbs.twimg.com/profile_images/1439444409/SelfPortraitSquare_normal.jpeg",
-        role: "attendee"
-    },
-    jessewilson: {
-        profile: "https://pbs.twimg.com/profile_images/1256788744302219265/FT68FcOm_normal.jpg",
-        role: "speaker"
-    },
-    dN0t: {
-        profile: "https://pbs.twimg.com/profile_images/1099007038590468100/F_4bingS_normal.png",
-        role: "attendee"
-    }
-}
+
 function firstPause(func, pauseTime) {
     let lastCall = 0
     return function () {
