@@ -176,6 +176,30 @@ class WorldSceneCollide {
     }
 }
 
+class PlayerAndInfo {
+    playerId;
+    profileUsername;
+    isMe;
+    container;
+    player;
+    chatBubble;
+    talkRadius;
+    lastPlayerInfo;
+
+    constructor(playerId, profileUsername, isMe, container, player, chatBubble, talkRadius) {
+        this.playerId = playerId;
+        this.profileUsername = profileUsername;
+        this.isMe = isMe
+        this.container = container;
+        this.player = player;
+        this.chatBubble = chatBubble;
+        this.talkRadius = talkRadius;
+    }
+
+    addLastPlayerInfo(playerInfo){
+        this.lastPlayerInfo = playerInfo
+    }
+}
 
 class WorldScene extends Phaser.Scene {
 
@@ -183,20 +207,31 @@ class WorldScene extends Phaser.Scene {
         super({
             key: sceneKey
         });
+        //This is the react app component that holds this game
         this.appContext = appContext
+        //Unique key for this "world". May be multiple worlds for the same map
         this.worldKey = sceneKey
+        //Key to the map definition
         this.mapKey = mapKey
+        //Return to calling map when reaching bounds. Most/all maps are false. May remove this.
         this.backOnBounds = backOnBounds
+        //Current position of player
         this.currentX = -10000
         this.currentY = -10000
+
         this.collides = []
         this.allPlayers = {}
         this.stompUserId = null
         this.music = null
     }
 
-    myPlayerInfo(){
-        return this.allPlayers[this.stompUserId]
+    otherPlayersIter(func){
+        Object.keys(this.allPlayers).forEach((key) => {
+            const playerAndInfo = this.allPlayers[key]
+            if (!playerAndInfo.isMe) {
+                func(this.allPlayers[key])
+            }
+        })
     }
 
     storePlayerInfo(playerInfo) {
@@ -241,64 +276,64 @@ class WorldScene extends Phaser.Scene {
         this.stompClient.connect(headers, function (frame) {
             this.stompUserId = frame['headers']['user-name']
 
-            this.stompClient.subscribe('/user/topic/currentPlayers/' + this.worldKey, function (msg) {
+            this.stompClient.subscribe('/user/topic/currentPlayers/' + this.worldKey, (msg) => {
                 let players = JSON.parse(msg.body)
-                Object.keys(players).forEach(function (id) {
-                    this.storePlayerInfo(players[id])
+                Object.keys(players).forEach((id) => {
                     if (players[id].playerId === this.stompUserId) {
-                        this.createPlayer(players[id]);
+                        this.storePlayerInfo(this.createPlayer(players[id], true))
                     } else {
-                        this.addOtherPlayers(players[id]);
+                        this.storePlayerInfo(this.addOtherPlayers(players[id]))
                     }
-                }.bind(this));
-            }.bind(this));
+                })
+            })
 
-            this.stompClient.subscribe('/topic/newPlayer/' + this.worldKey, function (msg) {
+            this.stompClient.subscribe('/topic/newPlayer/' + this.worldKey, (msg) => {
                 let playerInfo = JSON.parse(msg.body)
-
-                this.storePlayerInfo(playerInfo)
-                this.addOtherPlayers(playerInfo);
-            }.bind(this));
+                this.storePlayerInfo(this.addOtherPlayers(playerInfo))
+            })
 
             //Can't we just remove by key?
-            this.stompClient.subscribe('/topic/disconnect/' + this.worldKey, function (msg) {
+            this.stompClient.subscribe('/topic/disconnect/' + this.worldKey, (msg) => {
                 let playerId = msg.body
-                let player = this.otherPlayers[playerId]
+                let player = this.allPlayers[playerId]
                 if (player) {
-                    player.destroy();
-                    delete this.otherPlayers[playerId]
+                    player.container.destroy();
+                    delete this.allPlayers[playerId]
                 }
-            }.bind(this));
+            })
 
-            this.stompClient.subscribe('/topic/playerMoved/' + this.worldKey, function (msg) {
+            this.stompClient.subscribe('/topic/playerMoved/' + this.worldKey, (msg) => {
                 let playerMovementContainer = JSON.parse(msg.body)
+                if (playerMovementContainer.clientId === this.stompUserId)
+                    return
+
                 let playerInfoArray = playerMovementContainer.playerMovements;
-                let player = this.otherPlayers[playerMovementContainer.clientId]
+                let player = this.allPlayers[playerMovementContainer.clientId]
                 if (player) {
-                    playerInfoArray.forEach(function (playerInfo) {
+                    playerInfoArray.forEach((playerInfo) => {
 
                         setTimeout(() => {
-                            player.flipX = playerInfo[3] == 1;
-                            player.setPosition(playerInfo[1], playerInfo[2]);
-                            player.touchTyping()
+                            player.container.flipX = playerInfo[3] === 1;
+                            player.container.setPosition(playerInfo[1], playerInfo[2]);
+                            player.container.touchTyping()
                         }, playerInfo[0])
 
-                    }.bind(this))
+                    })
                 }
-            }.bind(this));
+            })
 
-            this.stompClient.subscribe('/user/topic/hearMessage/' + this.worldKey, function (msg) {
+            this.stompClient.subscribe('/user/topic/hearMessage/' + this.worldKey, (msg) => {
                 let sentMessage = JSON.parse(msg.body)
                 const playerInfo = this.allPlayers[sentMessage.playerId]
 
                 this.appContext.props.showMessage(
                     sentMessage,
                     playerInfo)
-            }.bind(this));
+            })
 
-            callSendMessage = function (message) {
+            callSendMessage = (message) => {
                 this.stompClient.send("/app/sendMessage", this.worldKeyHeader(), message)
-            }.bind(this)
+            }
 
             imTalkin = function () {
                 this.input.keyboard.enabled = false
@@ -328,17 +363,17 @@ class WorldScene extends Phaser.Scene {
 
             this.stompClient.subscribe('/topic/playerTyping/' + this.worldKey, function (msg) {
                 let playerId = msg.body
-                let player = this.otherPlayers[playerId]
-                if (player) {
-                    player.showTyping()
+                let player = this.allPlayers[playerId]
+                if (player && !playerId.isMe) {
+                    player.container.showTyping()
                 }
             }.bind(this));
 
             this.stompClient.subscribe('/topic/playerDoneTyping/' + this.worldKey, function (msg) {
                 let playerId = msg.body
-                let player = this.otherPlayers[playerId]
-                if (player) {
-                    player.hideTyping()
+                let player = this.allPlayers[playerId]
+                if (player && !player.isMe) {
+                    player.container.hideTyping()
                 }
             }.bind(this));
 
@@ -368,9 +403,7 @@ class WorldScene extends Phaser.Scene {
             flipX ? 1 : 0
         ])
 
-        this.otherPlayers.getChildren().forEach(function (player) {
-            player.touchTyping()
-        }.bind(this));
+        this.otherPlayersIter((player) => player.container.touchTyping())
     }
 
     startMovementTracker() {
@@ -471,7 +504,7 @@ class WorldScene extends Phaser.Scene {
         });
 
 
-        if (this.currentX == -10000) {
+        if (this.currentX === -10000) {
             const spawnPoint = this.map.filterObjects("Objects", (obj) => {
                 return obj.type === "SpawnPoint"
             })[0]
@@ -693,25 +726,58 @@ class WorldScene extends Phaser.Scene {
         });
     }
 
-    createPlayer(playerInfo) {
+    createPlayer(playerInfo, myPlayer) {
         // our player sprite created through the physics system
-        this.player = this.add.sprite(0, 0, 'player', 6);
-
         this.container = this.add.container(playerInfo.x, playerInfo.y);
-        this.container.areaTouching = false
         this.container.setSize(32, 32);
         this.physics.world.enable(this.container);
+        this.container.areaTouching = false
+
+        this.player = this.add.sprite(0, 0, 'player', 6);
         this.container.add(this.player);
 
-        // don't walk on trees
-        this.physics.add.collider(this.container, this.obstacles, () => {
+        if(myPlayer) {
+            // don't walk on trees
+            this.physics.add.collider(this.container, this.obstacles, () => {
 
-        });
+            });
 
-        this.talkRadius = this.add.sprite(0, 0, 'talkRadius')
-        // this.talkRadius.setScale(.5)
-        this.container.add(this.talkRadius)
-        this.talkRadius.visible = false
+            // don't go out of the map
+            this.container.body.setCollideWorldBounds(true);
+
+            this.talkRadius = this.add.sprite(0, 0, 'talkRadius')
+            // this.talkRadius.setScale(.5)
+            this.container.add(this.talkRadius)
+            this.talkRadius.visible = false
+
+            // update camera
+            this.updateCamera();
+
+            this.collides.forEach((cl) => {
+                const collider = this.physics.add.collider(
+                    this.container,
+                    cl.sprite,
+                    () => {
+
+                        if (!this.container.areaTouching) {
+                            this.container.areaTouching = true
+                            cl.callback()
+                        }
+                    }
+                    ,
+                    null,
+                    this
+                );
+                collider.overlapOnly = true
+            })
+
+            if (this.backOnBounds) {
+                this.container.body.onWorldBounds = true;
+                this.physics.world.on('worldbounds', function (body) {
+                    this.backWorld()
+                }.bind(this), this);
+            }
+        }
 
         this.chatBubble = this.add.sprite(2, -40, 'chatBubbles', 0)
         this.container.add(this.chatBubble)
@@ -721,36 +787,19 @@ class WorldScene extends Phaser.Scene {
 
         this.addPlayerHead(this.container, playerInfo, this.chatBubble)
 
-        // update camera
-        this.updateCamera();
+        const p = new PlayerAndInfo(
+            playerInfo.playerId,
+            playerInfo.profileUsername,
+            true,
+            this.container,
+            this.player,
+            this.chatBubble,
+            this.talkRadius
+        )
 
-        // don't go out of the map
-        this.container.body.setCollideWorldBounds(true);
+        p.addLastPlayerInfo(playerInfo)
 
-        this.collides.forEach((cl) => {
-            const collider = this.physics.add.collider(
-                this.container,
-                cl.sprite,
-                () => {
-
-                    if (!this.container.areaTouching) {
-                        this.container.areaTouching = true
-                        cl.callback()
-                    }
-                }
-                ,
-                null,
-                this
-            );
-            collider.overlapOnly = true
-        })
-
-        if (this.backOnBounds) {
-            this.container.body.onWorldBounds = true;
-            this.physics.world.on('worldbounds', function (body) {
-                this.backWorld()
-            }.bind(this), this);
-        }
+        return p
     }
 
     addPlayerHead(container, playerInfo, chatBubble){
@@ -784,15 +833,14 @@ class WorldScene extends Phaser.Scene {
         this.physics.world.enable(container);
 
         const otherPlayer = this.add.sprite(0, 0, 'player', 9);
-        // otherPlayer.setTint(Math.random() * 0xffffff);
         container.add(otherPlayer)
 
-        let chatBubble = this.add.sprite(2, -12, 'chatBubbles', 0)
+        let chatBubble = this.add.sprite(2, -40, 'chatBubbles', 0)
         container.add(chatBubble)
         chatBubble.anims.play('talking', true);
         chatBubble.visible = false
+        chatBubble.setDepth(1550)
 
-        container.playerId = playerInfo.playerId;
         container.player = otherPlayer
         container.chatBubble = chatBubble
 
@@ -804,7 +852,7 @@ class WorldScene extends Phaser.Scene {
                 container.touchTyping()
             }
             ,
-            () => container.chatBubble.visible = false,
+            () => container.hideTyping(),
             5000
         )
 
@@ -822,7 +870,16 @@ class WorldScene extends Phaser.Scene {
         }
 
         this.otherPlayers.add(container);
-        this.otherPlayers[playerInfo.playerId] = container
+        const p = new PlayerAndInfo(
+            playerInfo.playerId,
+            playerInfo.profileUsername,
+            false,
+            container,
+            otherPlayer,
+            chatBubble,
+            null)
+        p.addLastPlayerInfo(playerInfo)
+        return p
     }
 
     updateCamera() {
