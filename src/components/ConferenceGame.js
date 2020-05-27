@@ -80,27 +80,6 @@ let callSendMessage = (message) => {
     console.log("Can't send now: " + message)
 }
 
-let imTalkin = () => {
-
-}
-
-let imNotTalkin = () => {
-    // inputMessage.value = ""
-}
-
-let typing = () => {
-
-}
-
-let cancelTyping = () => {
-
-}
-
-function addMessageElement(el) {
-    // messages.append(el);
-    // messages.lastChild.scrollIntoView();
-}
-
 function showMessage(message) {
     const messageSpan = document.getElementById("messageSpan")
     messageSpan.innerText = message
@@ -241,7 +220,8 @@ class WorldScene extends Phaser.Scene {
     shutDown() {
         this.stompClient.disconnect()
         clearInterval(this.movementTrackerIntervalId)
-        cancelTyping()
+        this.sendTypingCallbacks.clear()
+        delete this.sendTypingCallbacks
         delete this.player
         delete this.container
         delete this.talkRadius
@@ -335,36 +315,10 @@ class WorldScene extends Phaser.Scene {
                 this.stompClient.send("/app/sendMessage", this.worldKeyHeader(), message)
             }
 
-            imTalkin = function () {
-                this.input.keyboard.enabled = false
-                this.talkRadius.visible = true
-                this.chatBubble.visible = true
-                // inputMessage.style.readOnly = false
-                // inputMessage.style.backgroundColor = "rgb(255,255,255)"
-            }.bind(this)
-
-            imNotTalkin = function () {
-                this.input.keyboard.enabled = true
-                this.talkRadius.visible = false
-                this.chatBubble.visible = false
-                // inputMessage.value = ""
-                // inputMessage.style.readOnly = true
-                // inputMessage.style.backgroundColor = "rgb(204,204,204)"
-                this.stompClient.send("/app/doneTyping", this.worldKeyHeader(), "")
-                cancelTyping()
-            }.bind(this)
-
-            let smoothCallbacks = smooth(function () {
-                this.stompClient.send("/app/typing", this.worldKeyHeader(), "")
-            }.bind(this), 1000)
-
-            typing = smoothCallbacks.trigger
-            cancelTyping = smoothCallbacks.clear
-
             this.stompClient.subscribe('/topic/playerTyping/' + this.worldKey, function (msg) {
                 let playerId = msg.body
                 let player = this.allPlayers[playerId]
-                if (player && !playerId.isMe) {
+                if (player && !player.isMe) {
                     player.container.showTyping()
                 }
             }.bind(this));
@@ -381,16 +335,21 @@ class WorldScene extends Phaser.Scene {
         }.bind(this));
     }
 
+    sendTypingCallbacks = smooth(function () {
+        this.stompClient.send("/app/typing", this.worldKeyHeader(), "")
+    }.bind(this), 1000)
+
     imTalkin = function () {
         this.talkRadius.visible = true
         this.chatBubble.visible = true
+        this.sendTypingCallbacks.trigger()
     }.bind(this)
 
     imNotTalkin = function () {
         this.talkRadius.visible = false
         this.chatBubble.visible = false
         this.stompClient.send("/app/doneTyping", this.worldKeyHeader(), "")
-        cancelTyping()
+        this.sendTypingCallbacks.clear()
     }.bind(this)
 
     playerMovement(x, y, flipX) {
