@@ -1,4 +1,5 @@
 import React from 'react'
+import {Client, Message} from "@stomp/stompjs";
 
 function Schedule() {
     return (
