@@ -8,6 +8,7 @@ import NavBar from './components/NavBar';
 import Profile from './components/Profile';
 import Schedule from './components/Schedule';
 import GameInterface from "./components/GameInterface";
+import FirebaseAuth from './components/FirebaseAuth';
 
 class App extends React.Component {
 
@@ -75,6 +76,7 @@ class App extends React.Component {
                 <Route path="/confgame" render={() => <GameInterface profileUsername={username} />} />
                 <Route path="/schedule" render={() => <Schedule />} />
                 <Route path="/profile" render={(props) =>  <Profile {...props} history={this.props.history} currentUser={this.state.currentUser} setCurrentUser={this.setCurrentUser}/> } />
+                <Route path="/start" render={(props) =>  <FirebaseAuth {...props} />} />
               </Switch>
             </Router> 
           </div>
