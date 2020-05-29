@@ -3,7 +3,7 @@ import ProfileMenu from './ProfileMenu'
 import { NavLink } from 'react-router-dom'
 
 const link = {
-    width: '100px',
+    width: '150px',
     // padding: '12px',
     // margin: '0 6px 6px',
     color: 'white',
@@ -15,6 +15,7 @@ function NavBar(props) {
     return(
         <div className="navbar">
 
+            <NavLink to="/start" style={link}>Start Here</NavLink>
             <NavLink to="/home" style={link}>Home</NavLink>
             <NavLink to="/schedule" style={link}>Schedule</NavLink>
 

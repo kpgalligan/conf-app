@@ -17,7 +17,7 @@ class GameChat extends Component {
 
         const Row = ({ index, style }) => (
             <div className={index % 2 ? "ListItemOdd" : "ListItemEven"} style={style}>
-                <img src={this.props.findPlayerImageUrl(this.props.chatMessages[index].playerInfo)}/>
+                <img src={this.props.findPlayerImageUrl(this.props.chatMessages[index].playerInfo)} alt="player"/>
                 {this.props.chatMessages[index].message.message}
             </div>
         );

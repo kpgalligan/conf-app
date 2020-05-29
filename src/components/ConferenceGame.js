@@ -1,91 +1,7 @@
 import React, { Component } from 'react'
-
 import SockJS from 'sockjs-client'
 import {Stomp} from "@stomp/stompjs";
 import Phaser from 'phaser'
-
-class ConferenceGame extends Component {
-    config = {
-        type: Phaser.AUTO,
-        parent: "phaser-game",
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 1050, // Canvas width in pixels
-        height: 800, // Canvas height in pixels
-        // zoom: 2,
-        pixelArt: true,
-        physics: {
-            default: 'arcade',
-            arcade: {
-                gravity: {
-                    y: 0
-                },
-                debug: true // set to true to view zones
-            }
-        },
-        scene: [
-            BootScene,
-            new WorldScene(
-                "firstWorld",
-                "map",
-                false,
-                this),
-            new WorldScene(
-                "chatWorld",
-                "chatRoomMap",
-                false,
-                this),
-            new WorldScene(
-                "secretRoom",
-                "secretRoomMap",
-                false,
-                this),
-            new WorldScene(
-                "vipRoom",
-                "vipRoomMap",
-                false,
-                this)
-
-        ]
-    };
-
-    componentDidMount() {
-        this.game = new Phaser.Game(this.config);
-        this.props.sendMessageCallback.callback = (m)=>{
-            callSendMessage(m)
-        }
-    }
-
-    shouldComponentUpdate(nextProps) {
-        if(this.game) {
-            this.game.scene.getScenes(true).forEach((scene) => {
-                if (nextProps.talking && scene.imTalkin)
-                    scene.imTalkin()
-                if (!nextProps.talking && scene.imNotTalkin)
-                    scene.imNotTalkin()
-            })
-
-        }
-        return false;
-    }
-
-    render() {
-        return (
-            <div id="phaser-game" />
-        )
-    }
-}
-
-let callSendMessage = (message) => {
-    console.log("Can't send now: " + message)
-}
-
-function showMessage(message) {
-    const messageSpan = document.getElementById("messageSpan")
-    messageSpan.innerText = message
-    messageSpan.style.display = "block"
-    setTimeout(() => messageSpan.style.display = "none", 3000)
-}
 
 class BootScene extends Phaser.Scene {
     constructor() {
@@ -535,7 +451,7 @@ class WorldScene extends Phaser.Scene {
 
     makeTextSignTrigger(signBox) {
 
-        let playTable = this.physics.add.staticGroup()
+        // let playTable = this.physics.add.staticGroup()
         let textObject = this.add.text(signBox.x, signBox.y - 70, signBox.name,
             {
                 padding: 6,
@@ -959,28 +875,115 @@ class WorldScene extends Phaser.Scene {
     }
 }
 
-let worldStack = []
-const twitterUsernames = [
-    "kpgalligan",
-    "TouchlabHQ",
-    "miss_cheese",
-    "chislett",
-    "treelzebub",
-    "chethaase",
-    "jessewilson",
-    "dN0t"
-]
+class ConferenceGame extends Component {
+    config = {
+        type: Phaser.AUTO,
+        parent: "phaser-game",
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 1050, // Canvas width in pixels
+        height: 800, // Canvas height in pixels
+        // zoom: 2,
+        pixelArt: true,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: {
+                    y: 0
+                },
+                debug: true // set to true to view zones
+            }
+        },
+        scene: [
+            BootScene,
+            new WorldScene(
+                "firstWorld",
+                "map",
+                false,
+                this),
+            new WorldScene(
+                "chatWorld",
+                "chatRoomMap",
+                false,
+                this),
+            new WorldScene(
+                "secretRoom",
+                "secretRoomMap",
+                false,
+                this),
+            new WorldScene(
+                "vipRoom",
+                "vipRoomMap",
+                false,
+                this)
 
-function firstPause(func, pauseTime) {
-    let lastCall = 0
-    return function () {
-        let now = Date.now();
-        if (now - lastCall > pauseTime) {
-            lastCall = now
-            func()
+        ]
+    };
+
+    componentDidMount() {
+        this.game = new Phaser.Game(this.config);
+        this.props.sendMessageCallback.callback = (m)=>{
+            callSendMessage(m)
         }
     }
+
+    shouldComponentUpdate(nextProps) {
+        if(this.game) {
+            this.game.scene.getScenes(true).forEach((scene) => {
+                if (nextProps.talking && scene.imTalkin)
+                    scene.imTalkin()
+                if (!nextProps.talking && scene.imNotTalkin)
+                    scene.imNotTalkin()
+            })
+
+        }
+        return false;
+    }
+
+    render() {
+        return (
+            <div id="phaser-game" />
+        )
+    }
 }
+
+let callSendMessage = (message) => {
+    console.log("Can't send now: " + message)
+}
+
+// function showMessage(message) {
+//     const messageSpan = document.getElementById("messageSpan")
+//     messageSpan.innerText = message
+//     messageSpan.style.display = "block"
+//     setTimeout(() => messageSpan.style.display = "none", 3000)
+// }
+
+
+
+
+
+let worldStack = []
+// const twitterUsernames = [
+//     "kpgalligan",
+//     "TouchlabHQ",
+//     "miss_cheese",
+//     "chislett",
+//     "treelzebub",
+//     "chethaase",
+//     "jessewilson",
+//     "dN0t"
+// ]
+
+// function firstPause(func, pauseTime) {
+//     let lastCall = 0
+//     return function () {
+//         let now = Date.now();
+//         if (now - lastCall > pauseTime) {
+//             lastCall = now
+//             func()
+//         }
+//     }
+// }
 
 function smooth(func, pauseTime) {
     let lastCallTime = 0

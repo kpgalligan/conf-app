@@ -6,21 +6,12 @@ class FirebaseAuth extends React.Component {
 
     componentDidMount() {
         var uiConfig = {
-            // signInSuccessUrl: 'http://localhost:3001/home',
+            signInSuccessUrl: 'http://localhost:3001/home',
             signInFlow: 'redirect',
             callbacks: {
-                signInSuccessWithAuthResult: (authResult, redirectUrl) => {
-                  console.log(
-                    "Avatar: ", authResult.user.photoURL, 
-                    "Email: ", authResult.user.email, 
-                    "Auth token: ", authResult.credential.accessToken, 
-                    "Provider ID: ", authResult.credential.providerId, 
-                    "User ID: ", authResult.user.uid);
-
-                    console.log(authResult)
-
-                // displayName
-                  return false;
+                signInSuccessWithAuthResult: (authResult) => {
+                  this.handleSubmit(authResult)
+                  return true;
                 },
               },
             signInOptions: [
@@ -46,17 +37,43 @@ class FirebaseAuth extends React.Component {
           var ui = new firebaseui.auth.AuthUI(firebase.auth());
           // The start method will wait until the DOM is loaded.
           ui.start('#firebaseui-auth-container', uiConfig);
-          }, 1000)
-          
+          }, 100) 
+    }
+
+    handleSubmit = (authResult) => {
+
+        fetch(`${process.env.REACT_APP_API_CALL}/start`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({
+              email : authResult.user.email,
+              name : authResult.user.displayName,
+              uid : authResult.user.uid,
+              auth_provider : authResult.credential.providerId,
+              auth_token : authResult.credential.accessToken,
+              image_url : authResult.user.photoURL
+            })
+        })
+        .then(response => console.log(response))
+        .then(response => {
+            if (response.errors) {
+                alert(response.errors)
+            } else {
+                // this.props.setCurrentUser(response)
+                console.log("Response: ", response)
+            }
+        })
+
+      
     }
 
     render () {
-
-        console.log("Testing Firebase component")
-
         return (
             <div id="firebaseui-auth-container">
-                <h1>Test Hello!</h1>
+                <h1>Welcome! Please sign up/log in.</h1>
             </div>
         )
     }
