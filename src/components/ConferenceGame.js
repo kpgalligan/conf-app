@@ -243,7 +243,8 @@ class WorldScene extends Phaser.Scene {
             worldKey: this.worldKey,
             playerX: playerX,
             playerY: playerY,
-            profileUsername: this.appContext.props.profileUsername
+            profileUsername: this.appContext.props.profileUsername,
+            profileImage: this.appContext.props.profileImage
         }
     }
 

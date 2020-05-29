@@ -62,6 +62,8 @@ class App extends React.Component {
 
     // console.log("App props: ", this.props)
     const username = this.state.currentUser ? this.state.currentUser.twitter_handle : ""
+    const profileImage = this.userProfiles[username].profile
+
     return (
       <div className="App">
         <header className="App-header">
@@ -72,7 +74,9 @@ class App extends React.Component {
                 <Route path="/home" render={(routerProps) => <MainMenu {...routerProps} logout={this.logout}/>} />
                 <Route path="/signup" render={() => <SignupForm setCurrentUser={this.setCurrentUser} />} />
                 <Route path="/login" render={() => <LoginForm setCurrentUser={this.setCurrentUser}/>} />
-                <Route path="/confgame" render={() => <GameInterface profileUsername={username} />} />
+                <Route path="/confgame" render={() => <GameInterface
+                    profileUsername={username}
+                    profileImage={profileImage}/>} />
                 <Route path="/schedule" render={() => <Schedule />} />
                 <Route path="/profile" render={(props) =>  <Profile {...props} history={this.props.history} currentUser={this.state.currentUser} setCurrentUser={this.setCurrentUser}/> } />
               </Switch>
@@ -82,6 +86,41 @@ class App extends React.Component {
       </div>
     );
 
+  }
+
+  userProfiles = {
+    miss_cheese: {
+      profile: "https://pbs.twimg.com/profile_images/1058805611356254208/WWltCPZP_normal.jpg",
+      role: "attendee"
+    },
+    kpgalligan: {
+      profile: "https://pbs.twimg.com/profile_images/1245852692523683840/ixZ6S5RX_normal.jpg",
+      role: "speaker"
+    },
+    TouchlabHQ: {
+      profile: "https://pbs.twimg.com/profile_images/1145706250635808768/hd9OurrF_normal.png",
+      role: "attendee"
+    },
+    chislett: {
+      profile: "https://pbs.twimg.com/profile_images/514827467203162115/GLgP3dIE_normal.jpeg",
+      role: "host"
+    },
+    treelzebub: {
+      profile: "https://pbs.twimg.com/profile_images/1014302182395412480/j6SoxgVu_normal.jpg",
+      role: "attendee"
+    },
+    chethaase: {
+      profile: "https://pbs.twimg.com/profile_images/1439444409/SelfPortraitSquare_normal.jpeg",
+      role: "attendee"
+    },
+    jessewilson: {
+      profile: "https://pbs.twimg.com/profile_images/1256788744302219265/FT68FcOm_normal.jpg",
+      role: "speaker"
+    },
+    dN0t: {
+      profile: "https://pbs.twimg.com/profile_images/1099007038590468100/F_4bingS_normal.png",
+      role: "attendee"
+    }
   }
 }
 
