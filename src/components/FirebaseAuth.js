@@ -1,17 +1,18 @@
 import React from 'react';
-import firebase from 'firebase'
-import * as firebaseui from 'firebaseui'
+import firebase from 'firebase';
+import * as firebaseui from 'firebaseui';
+import { withRouter } from "react-router-dom";
 
 class FirebaseAuth extends React.Component {
 
     componentDidMount() {
         var uiConfig = {
-            signInSuccessUrl: 'http://localhost:3001/home',
+            // signInSuccessUrl: 'http://localhost:3001/home',
             signInFlow: 'redirect',
             callbacks: {
                 signInSuccessWithAuthResult: (authResult) => {
                   this.handleSubmit(authResult)
-                  return true;
+                  return false;
                 },
               },
             signInOptions: [
@@ -57,12 +58,13 @@ class FirebaseAuth extends React.Component {
               image_url : authResult.user.photoURL
             })
         })
-        .then(response => console.log(response))
+        .then(response => response.json())
         .then(response => {
             if (response.errors) {
                 alert(response.errors)
+                console.log("Error response: ", response)
             } else {
-                // this.props.setCurrentUser(response)
+                this.props.setCurrentUser(response)
                 console.log("Response: ", response)
             }
         })
@@ -71,6 +73,9 @@ class FirebaseAuth extends React.Component {
     }
 
     render () {
+
+      console.log(this.props)
+
         return (
             <div id="firebaseui-auth-container">
                 <h1>Welcome! Please sign up/log in.</h1>
@@ -81,4 +86,4 @@ class FirebaseAuth extends React.Component {
     
 }
 
-export default FirebaseAuth
+export default withRouter(FirebaseAuth)

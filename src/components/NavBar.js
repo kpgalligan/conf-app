@@ -21,7 +21,7 @@ function NavBar(props) {
 
             {
                 props.currentUser ? <ProfileMenu currentUser={props.currentUser} logout={props.logout}/> :
-                <NavLink to="/login" style={link}>Log In</NavLink>
+                null
             }
            
         </div>

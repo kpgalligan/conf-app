@@ -2,13 +2,14 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import './App.css';
 import MainMenu from './components/mainMenu'
-import SignupForm from './components/SignupForm'
-import LoginForm from './components/LoginForm'
+// import SignupForm from './components/SignupForm'
+// import LoginForm from './components/LoginForm'
 import NavBar from './components/NavBar';
 import Profile from './components/Profile';
 import Schedule from './components/Schedule';
 import GameInterface from "./components/GameInterface";
 import FirebaseAuth from './components/FirebaseAuth';
+import { withRouter } from "react-router-dom";
 
 class App extends React.Component {
 
@@ -58,31 +59,44 @@ class App extends React.Component {
 
   
 
-  // setCurrentUser = (response) => {
-  //   this.setState({
-  //     currentUser: response.user
-  //   }, () => {
-  //     localStorage.token = response.token
-  //     this.props.history.push("/home")}
-  //   )
-  // }
+  setCurrentUser = (response) => {
+    this.setState({
+      currentUser: response.user
+    }, () => {
+      // localStorage.token = response.token
+      if (response.new_user) {
+        this.props.history.push("/profile")
+        this.setState({
+          state: this.state
+        })
+      } else {
+        this.props.history.push("/home")
+        this.setState({
+          state: this.state
+        })
+      }
+      }
+    )
+  }
 
-  // logout = () => {
-  //   this.setState({
-  //     currentUser: null
-  //   }, () => {
-  //     localStorage.removeItem("token")
-  //     // add redirect to home - or maybe login?
-  //     this.props.history.push("/login")
-  //   }
+  logout = () => {
+    this.setState({
+      currentUser: null
+    }, () => {
+      // localStorage.removeItem("token")
+      // add redirect to home - or maybe login?
+      this.props.history.push("/start")
+    }
     
-  //   )
-  // }
+    )
+  }
 
   render() {
 
-    // console.log("App props: ", this.props)
+    console.log("App state: ", this.state)
+
     const username = this.state.currentUser ? this.state.currentUser.twitter_handle : ""
+
     return (
       <div className="App">
         <header className="App-header">
@@ -90,10 +104,10 @@ class App extends React.Component {
             <Router>
             <NavBar currentUser={this.state.currentUser} logout={this.logout}/>
               <Switch>
-                <Route path="/start" render={(props) =>  <FirebaseAuth {...props} />} />
+                <Route path="/start" render={(props) =>  <FirebaseAuth {...props} setCurrentUser={this.setCurrentUser}/>} />
                 <Route path="/home" render={(routerProps) => <MainMenu {...routerProps} logout={this.logout}/>} />
-                <Route path="/signup" render={() => <SignupForm setCurrentUser={this.setCurrentUser} />} />
-                <Route path="/login" render={() => <LoginForm setCurrentUser={this.setCurrentUser}/>} />
+                {/* <Route path="/signup" render={() => <SignupForm  />} /> */}
+                {/* <Route path="/login" render={() => <LoginForm setCurrentUser={this.setCurrentUser}/>} /> */}
                 <Route path="/confgame" render={() => <GameInterface profileUsername={username} />} />
                 <Route path="/schedule" render={() => <Schedule />} />
                 <Route path="/profile" render={(props) =>  <Profile {...props} history={this.props.history} currentUser={this.state.currentUser} setCurrentUser={this.setCurrentUser}/> } />
@@ -107,4 +121,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default withRouter(App);
