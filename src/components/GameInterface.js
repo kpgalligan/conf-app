@@ -29,6 +29,7 @@ class GameInterface extends Component {
             <div className="flex-container">
                 <ConferenceGame
                     profileUsername={this.props.profileUsername}
+                    profileImage={this.props.profileImage}
                     talking={this.state.talking}
                     startTalking={()=>{
                         if(!this.state.talking)
@@ -43,7 +44,6 @@ class GameInterface extends Component {
                         this.state.chatMessages.push({message: m, playerInfo: playerInfo})
                         this.setState({chatMessages: this.state.chatMessages})
                     }}
-                    findPlayerImageUrl={(playerInfo) => this.findPlayerImageUrl(playerInfo)}
                 />
                 <GameChat
                     talking={this.state.talking}
@@ -59,49 +59,9 @@ class GameInterface extends Component {
                     }}
                     sendMessage={(m) => this.sendMessageCallback.send(m)}
                     chatMessages={this.state.chatMessages}
-                    findPlayerImageUrl={(playerInfo) => this.findPlayerImageUrl(playerInfo)}
                 />
             </div>
         )
-    }
-
-    findPlayerImageUrl(playerInfo){
-        return this.userProfiles[playerInfo.profileUsername].profile
-    }
-
-    userProfiles = {
-        miss_cheese: {
-            profile: "https://pbs.twimg.com/profile_images/1058805611356254208/WWltCPZP_normal.jpg",
-            role: "attendee"
-        },
-        kpgalligan: {
-            profile: "https://pbs.twimg.com/profile_images/1245852692523683840/ixZ6S5RX_normal.jpg",
-            role: "speaker"
-        },
-        TouchlabHQ: {
-            profile: "https://pbs.twimg.com/profile_images/1145706250635808768/hd9OurrF_normal.png",
-            role: "attendee"
-        },
-        chislett: {
-            profile: "https://pbs.twimg.com/profile_images/514827467203162115/GLgP3dIE_normal.jpeg",
-            role: "host"
-        },
-        treelzebub: {
-            profile: "https://pbs.twimg.com/profile_images/1014302182395412480/j6SoxgVu_normal.jpg",
-            role: "attendee"
-        },
-        chethaase: {
-            profile: "https://pbs.twimg.com/profile_images/1439444409/SelfPortraitSquare_normal.jpeg",
-            role: "attendee"
-        },
-        jessewilson: {
-            profile: "https://pbs.twimg.com/profile_images/1256788744302219265/FT68FcOm_normal.jpg",
-            role: "speaker"
-        },
-        dN0t: {
-            profile: "https://pbs.twimg.com/profile_images/1099007038590468100/F_4bingS_normal.png",
-            role: "attendee"
-        }
     }
 }
 
