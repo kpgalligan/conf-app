@@ -8,7 +8,7 @@ class FirebaseAuth extends React.Component {
     componentDidMount() {
         var uiConfig = {
             // signInSuccessUrl: 'http://localhost:3001/home',
-            signInFlow: 'redirect',
+            signInFlow: 'popup',
             callbacks: {
                 signInSuccessWithAuthResult: (authResult) => {
                   this.handleSubmit(authResult)
