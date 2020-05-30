@@ -41,7 +41,7 @@ class App extends React.Component {
   // }
 
   // testBackend() {
-   
+
   //   fetch("http://localhost:3000/start", {
   //     method: "POST",
   //     headers: {
@@ -53,11 +53,11 @@ class App extends React.Component {
   //     })
   //   })
   //   .then(response => response.json())
-    
+
   // }
 
 
-  
+
 
   setCurrentUser = (response) => {
     this.setState({
@@ -66,14 +66,14 @@ class App extends React.Component {
       // localStorage.token = response.token
       if (response.new_user) {
         this.props.history.push("/profile")
-        this.setState({
-          state: this.state
-        })
+        // this.setState({
+        //   state: this.state
+        // })
       } else {
         this.props.history.push("/home")
-        this.setState({
-          state: this.state
-        })
+        // this.setState({
+        //   state: this.state
+        // })
       }
       }
     )
@@ -87,7 +87,7 @@ class App extends React.Component {
       // add redirect to home - or maybe login?
       this.props.history.push("/start")
     }
-    
+
     )
   }
 
@@ -104,15 +104,15 @@ class App extends React.Component {
             <Router>
             <NavBar currentUser={this.state.currentUser} logout={this.logout}/>
               <Switch>
-                <Route path="/start" render={(props) =>  <FirebaseAuth {...props} setCurrentUser={this.setCurrentUser}/>} />
-                <Route path="/home" render={(routerProps) => <MainMenu {...routerProps} logout={this.logout}/>} />
-                {/* <Route path="/signup" render={() => <SignupForm  />} /> */}
-                {/* <Route path="/login" render={() => <LoginForm setCurrentUser={this.setCurrentUser}/>} /> */}
-                <Route path="/confgame" render={() => <GameInterface profileUsername={username} />} />
-                <Route path="/schedule" render={() => <Schedule />} />
-                <Route path="/profile" render={(props) =>  <Profile {...props} history={this.props.history} currentUser={this.state.currentUser} setCurrentUser={this.setCurrentUser}/> } />
+                <Route path="/start" render={() => <FirebaseAuth setCurrentUser={this.setCurrentUser}/>}/>
+                <Route path="/home" render={() => <MainMenu logout={this.logout}/>}/>
+                <Route path="/confgame" render={() => <GameInterface profileUsername={username}/>}/>
+                <Route path="/schedule" render={() => <Schedule/>}/>
+                <Route path="/profile" render={() => <Profile history={this.props.history}
+                                                       currentUser={this.state.currentUser}
+                                                       setCurrentUser={this.setCurrentUser}/>}/>
               </Switch>
-            </Router> 
+            </Router>
           </div>
         </header>
       </div>

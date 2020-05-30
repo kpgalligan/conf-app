@@ -12,20 +12,19 @@ const link = {
 
 function NavBar(props) {
 
-    return(
-        <div className="navbar">
+    if(props.currentUser){
+        return(
+            <div className="navbar">
+                <NavLink to="/confgame" style={link}>Game</NavLink>
+                <NavLink to="/home" style={link}>Home</NavLink>
+                <NavLink to="/schedule" style={link}>Schedule</NavLink>
+                <ProfileMenu currentUser={props.currentUser} logout={props.logout}/>
+            </div>
+        )
+    }else {
+        return (<div className="navbar"/>)
+    }
 
-            <NavLink to="/start" style={link}>Start Here</NavLink>
-            <NavLink to="/home" style={link}>Home</NavLink>
-            <NavLink to="/schedule" style={link}>Schedule</NavLink>
-
-            {
-                props.currentUser ? <ProfileMenu currentUser={props.currentUser} logout={props.logout}/> :
-                null
-            }
-           
-        </div>
-    )
 }
 
 export default NavBar
