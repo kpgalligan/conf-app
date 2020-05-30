@@ -691,7 +691,7 @@ class WorldScene extends Phaser.Scene {
         if (this.textures.exists(playerInfo.profileUsername)) {
             addHead()
         } else {
-            let profileImage = this.appContext.props.findPlayerImageUrl(playerInfo)
+            let profileImage = playerInfo.profileImage
             const loader = this.load.image(playerInfo.profileUsername, profileImage)
             loader.start()
 
