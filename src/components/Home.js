@@ -3,9 +3,10 @@ import MainMenu from "./mainMenu";
 import FirebaseAuth from "./FirebaseAuth";
 
 function Home(props) {
-    if(!props.currentUser){
+
+    if(!props.currentUser && props.readyForAuth){
         return (
-            <FirebaseAuth setCurrentUser={props.setCurrentUser}/>
+            <FirebaseAuth setCurrentUser={props.setCurrentUser} sendUserToDb={props.sendUserToDb}/>
         )
     } else {
         return (

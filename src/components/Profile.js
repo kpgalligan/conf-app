@@ -50,14 +50,10 @@ class Profile extends React.Component {
                 this.props.setCurrentUser(response)
             }
         })
-
-      
     }
 
 
     render() {
-
-        // console.log("Profile state: ", this.state)
 
         return (
             <div>
