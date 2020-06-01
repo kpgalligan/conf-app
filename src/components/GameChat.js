@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import { FixedSizeList as List } from "react-window";
+import {AutoSizer, List} from "react-virtualized";
 
 class GameChat extends Component {
     state = {
@@ -8,32 +8,43 @@ class GameChat extends Component {
 
     render() {
         const commentString = document.getElementById("commentString")
-        if(commentString) {
+        if (commentString) {
             if (this.props.talking)
                 setTimeout(() => commentString.focus(), 200)
             else
                 setTimeout(() => commentString.blur(), 200)
         }
 
-        const Row = ({ index, style }) => (
-            <div className={index % 2 ? "ListItemOdd" : "ListItemEven"} style={style}>
-                <img src={this.props.findPlayerImageUrl(this.props.chatMessages[index].playerInfo)} alt="player"/>
-                {this.props.chatMessages[index].message.message}
-            </div>
-        );
+        const rowRenderer = ({index, isScrolling, key, style}) => {
+            const imgUrl = this.props.chatMessages[index].playerInfo.profileImage
+            return (
+                <div key={key} style={style}>
+                    <img src={imgUrl} alt="player"/>
+                    {this.props.chatMessages[index].message.message}
+                </div>
+            );
+        };
 
         return (
             <div id="chatContainer">
                 <div className="chatArea">
-                    <List
-                        className="List"
-                        height={750}
-                        itemCount={this.props.chatMessages.length}
-                        itemSize={35}
-                        width={200}
-                    >
-                        {Row}
-                    </List>
+                    <AutoSizer>
+                        {({height, width}) => {
+                            return (
+                                <List
+                                    rowCount={this.props.chatMessages.length}
+                                    width={200}
+                                    height={height}
+                                    rowHeight={100}
+                                    rowRenderer={rowRenderer}
+                                    overscanRowCount={3}
+                                />
+
+                            )
+                        }
+                        }
+
+                    </AutoSizer>
                 </div>
                 <input
                     id="commentString"

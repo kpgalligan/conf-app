@@ -14,19 +14,20 @@ class MessageCallback {
     }
 }
 class GameInterface extends Component {
-    constructor() {
-        super();
-        this.sendMessageCallback = new MessageCallback()
-    }
     state = {
         talking: false,
         chatMessages:[]
     }
 
+    constructor() {
+        super();
+        this.sendMessageCallback = new MessageCallback()
+    }
+
     render() {
 
         return (
-            <div className="flex-container">
+            <>
                 <ConferenceGame
                     profileUsername={this.props.profileUsername}
                     profileImage={this.props.profileImage}
@@ -60,7 +61,7 @@ class GameInterface extends Component {
                     sendMessage={(m) => this.sendMessageCallback.send(m)}
                     chatMessages={this.state.chatMessages}
                 />
-            </div>
+            </>
         )
     }
 }
