@@ -166,6 +166,7 @@ class WorldScene extends Phaser.Scene {
     sockJsConnect() {
         let socket = new SockJS('http://192.168.2.190:8080/gs-guide-websocket');
         this.stompClient = Stomp.over(socket)
+        this.stompClient.debug = function (){};
 
         // this.stompClient.debug = null
         let headers = this.connectHeaders(this.currentX, this.currentY);
@@ -373,11 +374,6 @@ class WorldScene extends Phaser.Scene {
         // don't go out of the map
         this.physics.world.bounds.width = this.map.widthInPixels;
         this.physics.world.bounds.height = this.map.heightInPixels;
-
-        this.sponsorRoom = this.make.tilemap({
-            key: "sponsorRoom"
-        });
-
 
         if (this.currentX === -10000) {
             const spawnPoint = this.map.filterObjects("Objects", (obj) => {
@@ -943,9 +939,14 @@ class ConferenceGame extends Component {
     lastResizeCall = null
 
     resizeGameWindow() {
+        let width = Math.max(500, window.innerWidth - 204);
+        let height = Math.max(500, window.innerHeight - 84);
+
+        console.log("resizing", width, height)
+
         this.game.scale.resize(
-            Math.max(500, window.innerWidth - 204),
-            Math.max(500, window.innerHeight - 84)
+            width,
+            height
         );
     }
 

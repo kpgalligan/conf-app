@@ -29,12 +29,19 @@
 }
 
 #chatContainer{
-  border: 1px solid brown;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  /*border: 1px solid brown;*/
   width: 200px;
 }
 
+.chatArea {
+  flex-grow: 1;
+}
+
 #phaser-game{
-  border: 1px solid cyan;
+  /*border: 1px solid cyan;*/
   flex-grow: 1;
 }
 
