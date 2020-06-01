@@ -29,6 +29,10 @@ class App extends React.Component {
           });
     }
 
+    userProfileUrl(id) {
+        return `${process.env.REACT_APP_API_CALL}/image?id=${id}`
+    }
+
     sendUserToDb = (user, credential) => {
 
         console.log("Auth Result: ", user)
@@ -81,9 +85,6 @@ class App extends React.Component {
 
     render() {
 
-        const username = this.state.currentUser ? this.state.currentUser.twitter_handle : ""
-        const profileImage = this.state.currentUser ? this.state.currentUser.image_url : ""
-
         return (
             <div className="App">
                 <div className="App-body">
@@ -97,8 +98,8 @@ class App extends React.Component {
                                     sendUserToDb={this.sendUserToDb}
                                     readyForAuth={this.state.readyForAuth}
                                     logout={this.logout}/>}/>
-                                <Route path="/confgame" render={() => <GameInterface profileUsername={username}
-                                                                                     profileImage={profileImage}/>}/>}/>
+                                <Route path="/confgame"
+                                       render={() => <GameInterface userProfileUrl={this.userProfileUrl} currentUser={this.state.currentUser}/>}/>}/>
                                 <Route path="/schedule" render={() => <Schedule/>}/>
                                 <Route path="/profile" render={() => <Profile history={this.props.history}
                                                                               currentUser={this.state.currentUser}
