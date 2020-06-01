@@ -11,7 +11,7 @@ class FirebaseAuth extends React.Component {
             signInFlow: 'popup',
             callbacks: {
                 signInSuccessWithAuthResult: (authResult) => {
-                  this.handleSubmit(authResult)
+                  this.props.sendUserToDb(authResult.user, authResult.credential)
                   return false;
                 },
               },
@@ -32,44 +32,16 @@ class FirebaseAuth extends React.Component {
               window.location.assign('http://example.com');
             }
           };
+
+          var ui = new firebaseui.auth.AuthUI(firebase.auth())
+          ui.start('#firebaseui-auth-container', uiConfig)
         
-          setTimeout(() => {
-            // Initialize the FirebaseUI Widget using Firebase.
-          var ui = new firebaseui.auth.AuthUI(firebase.auth());
-          // The start method will wait until the DOM is loaded.
-          ui.start('#firebaseui-auth-container', uiConfig);
-          }, 100) 
-    }
-
-    handleSubmit = (authResult) => {
-
-        fetch(`${process.env.REACT_APP_API_CALL}/start`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            body: JSON.stringify({
-              email : authResult.user.email,
-              name : authResult.user.displayName,
-              uid : authResult.user.uid,
-              auth_provider : authResult.credential.providerId,
-              auth_token : authResult.credential.accessToken,
-              image_url : authResult.user.photoURL
-            })
-        })
-        .then(response => response.json())
-        .then(response => {
-            if (response.errors) {
-                alert(response.errors)
-                console.log("Error response: ", response)
-            } else {
-                this.props.setCurrentUser(response)
-                console.log("Response: ", response)
-            }
-        })
-
-      
+          // setTimeout(() => {
+          //   // Initialize the FirebaseUI Widget using Firebase.
+          // var ui = new firebaseui.auth.AuthUI(firebase.auth());
+          // // The start method will wait until the DOM is loaded.
+          // ui.start('#firebaseui-auth-container', uiConfig);
+          // }, 5000) 
     }
 
     render () {
