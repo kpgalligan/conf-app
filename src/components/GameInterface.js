@@ -29,9 +29,9 @@ class GameInterface extends Component {
         return (
             <>
                 <ConferenceGame
-                    profileUsername={this.props.profileUsername}
-                    profileImage={this.props.profileImage}
+                    currentUser={this.props.currentUser}
                     talking={this.state.talking}
+                    userProfileUrl={this.props.userProfileUrl}
                     startTalking={()=>{
                         if(!this.state.talking)
                             this.setState({talking:true})
@@ -58,8 +58,10 @@ class GameInterface extends Component {
                             talking: false
                         })
                     }}
+                    currentUser={this.props.currentUser}
                     sendMessage={(m) => this.sendMessageCallback.send(m)}
                     chatMessages={this.state.chatMessages}
+                    userProfileUrl={this.props.userProfileUrl}
                 />
             </>
         )

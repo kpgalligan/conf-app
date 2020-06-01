@@ -16,7 +16,7 @@ class GameChat extends Component {
         }
 
         const rowRenderer = ({index, isScrolling, key, style}) => {
-            const imgUrl = this.props.chatMessages[index].playerInfo.profileImage
+            const imgUrl = this.props.userProfileUrl(this.props.chatMessages[index].playerInfo.id)
             return (
                 <div key={key} style={style}>
                     <img src={imgUrl} alt="player"/>

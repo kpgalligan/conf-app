@@ -73,7 +73,7 @@ class WorldSceneCollide {
 
 class PlayerAndInfo {
     playerId;
-    profileUsername;
+    id;
     isMe;
     container;
     player;
@@ -81,9 +81,9 @@ class PlayerAndInfo {
     talkRadius;
     lastPlayerInfo;
 
-    constructor(playerId, profileUsername, isMe, container, player, chatBubble, talkRadius) {
+    constructor(playerId, id, isMe, container, player, chatBubble, talkRadius) {
         this.playerId = playerId;
-        this.profileUsername = profileUsername;
+        this.id = id;
         this.isMe = isMe
         this.container = container;
         this.player = player;
@@ -158,8 +158,7 @@ class WorldScene extends Phaser.Scene {
             worldKey: this.worldKey,
             playerX: playerX,
             playerY: playerY,
-            profileUsername: this.appContext.props.profileUsername,
-            profileImage: this.appContext.props.profileImage
+            id: this.appContext.props.currentUser.id
         }
     }
 
@@ -660,7 +659,7 @@ class WorldScene extends Phaser.Scene {
 
         const p = new PlayerAndInfo(
             playerInfo.playerId,
-            playerInfo.profileUsername,
+            playerInfo.id,
             true,
             this.container,
             this.player,
@@ -686,7 +685,7 @@ class WorldScene extends Phaser.Scene {
         if (this.textures.exists(playerInfo.playerId)) {
             addHead()
         } else {
-            let profileImage = playerInfo.profileImage
+            let profileImage = this.appContext.props.userProfileUrl(playerInfo.id)
             const loader = this.load.image(playerInfo.playerId, profileImage)
             loader.start()
 
@@ -743,7 +742,7 @@ class WorldScene extends Phaser.Scene {
         this.otherPlayers.add(container);
         const p = new PlayerAndInfo(
             playerInfo.playerId,
-            playerInfo.profileUsername,
+            playerInfo.id,
             false,
             container,
             otherPlayer,
