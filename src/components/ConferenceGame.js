@@ -137,7 +137,6 @@ class WorldScene extends Phaser.Scene {
         this.stompClient.disconnect()
         clearInterval(this.movementTrackerIntervalId)
         this.sendTypingCallbacks.clear()
-        delete this.sendTypingCallbacks
         delete this.player
         delete this.container
         delete this.talkRadius
@@ -680,7 +679,7 @@ class WorldScene extends Phaser.Scene {
 
     addPlayerHead(container, playerInfo, chatBubble){
         const addHead = () => {
-            const icon = this.add.rexCircleMaskImage(0, -20, playerInfo.profileUsername)
+            const icon = this.add.rexCircleMaskImage(0, -20, playerInfo.playerId)
             icon.width = 20
             icon.height = 20
             container.add(icon)
@@ -688,15 +687,15 @@ class WorldScene extends Phaser.Scene {
             container.add(chatBubble)
         }
 
-        if (this.textures.exists(playerInfo.profileUsername)) {
+        if (this.textures.exists(playerInfo.playerId)) {
             addHead()
         } else {
             let profileImage = playerInfo.profileImage
-            const loader = this.load.image(playerInfo.profileUsername, profileImage)
+            const loader = this.load.image(playerInfo.playerId, profileImage)
             loader.start()
 
             loader.on('filecomplete', function (key, file) {
-                if (key === playerInfo.profileUsername) {
+                if (key === playerInfo.playerId) {
                     addHead()
                 }
             }, this);
