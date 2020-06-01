@@ -41,28 +41,29 @@ class App extends React.Component {
 
         return (
             <div className="App">
-                <header className="App-header">
-                    <div>
-                        <Router>
-                            <NavBar currentUser={this.state.currentUser} logout={this.logout}/>
+                <div className="App-body">
+                    <Router>
+                        <NavBar currentUser={this.state.currentUser} logout={this.logout}/>
+                        <div className="App-content">
                             <Switch>
                                 <Route exact path="/" render={() => <Home
                                     currentUser={this.state.currentUser}
                                     setCurrentUser={this.setCurrentUser}
                                     logout={this.logout}/>}/>
-                                <Route path="/confgame" render={() => <GameInterface profileUsername={username} profileImage={profileImage}/>}/>}/>
+                                <Route path="/confgame" render={() => <GameInterface profileUsername={username}
+                                                                                     profileImage={profileImage}/>}/>}/>
                                 <Route path="/schedule" render={() => <Schedule/>}/>
                                 <Route path="/profile" render={() => <Profile history={this.props.history}
                                                                               currentUser={this.state.currentUser}
                                                                               setCurrentUser={this.setCurrentUser}/>}/>
                             </Switch>
-                        </Router>
-                    </div>
-                </header>
+                        </div>
+                    </Router>
+                </div>
             </div>
         );
 
-  }
+    }
 }
 
 export default withRouter(App);

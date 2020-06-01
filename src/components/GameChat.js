@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import { FixedSizeList as List } from "react-window";
+import {FixedSizeList as List} from "react-window";
 
 class GameChat extends Component {
     state = {
@@ -8,26 +8,30 @@ class GameChat extends Component {
 
     render() {
         const commentString = document.getElementById("commentString")
-        if(commentString) {
+        if (commentString) {
             if (this.props.talking)
                 setTimeout(() => commentString.focus(), 200)
             else
                 setTimeout(() => commentString.blur(), 200)
         }
 
-        const Row = ({ index, style }) => (
+        const Row = ({index, style}) => {
+            const imgUrl = this.props.chatMessages[index].playerInfo.profileImage
+            console.log("this.props.chatMessages", this.props.chatMessages)
+            return (
             <div className={index % 2 ? "ListItemOdd" : "ListItemEven"} style={style}>
-                <img src={this.props.findPlayerImageUrl(this.props.chatMessages[index].playerInfo)} alt="player"/>
+                <img src={imgUrl} alt="player"/>
                 {this.props.chatMessages[index].message.message}
             </div>
-        );
+        )
+        }
 
         return (
             <div id="chatContainer">
                 <div className="chatArea">
                     <List
                         className="List"
-                        height={750}
+                        height={500}
                         itemCount={this.props.chatMessages.length}
                         itemSize={35}
                         width={200}

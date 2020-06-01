@@ -921,11 +921,33 @@ class ConferenceGame extends Component {
         ]
     };
 
+    resizeTrigger = () => {
+        if(this.lastResizeCall)
+            clearTimeout(this.lastResizeCall)
+        this.lastResizeCall = setTimeout(() => this.resizeGameWindow(), 500)
+    };
+
     componentDidMount() {
         this.game = new Phaser.Game(this.config);
         this.props.sendMessageCallback.callback = (m)=>{
             callSendMessage(m)
         }
+
+        window.addEventListener("resize", this.resizeTrigger,false);
+        setTimeout(() => this.resizeGameWindow(), 200)
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener(this.resizeTrigger)
+    }
+
+    lastResizeCall = null
+
+    resizeGameWindow() {
+        this.game.scale.resize(
+            Math.max(500, window.innerWidth - 204),
+            Math.max(500, window.innerHeight - 84)
+        );
     }
 
     shouldComponentUpdate(nextProps) {

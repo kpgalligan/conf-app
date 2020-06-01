@@ -2,31 +2,40 @@
   text-align: center;
 }
 
-.App-header {
+.App-body {
   background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  /* align-items: center; */
   justify-content: flex-start;
   font-size: calc(10px + 2vmin);
   color: white;
+  height:100vh;
 }
 
 .navbar {
   display: flex;
+  height: 80px;
+  flex-grow: 0;
   justify-content: space-around;
-  border-bottom-style: solid;
-  border-color: rgba(150,150,150,0.25);
-  border-width: 1px;
-  padding: 10px;
-  padding-left: 15px;
+  width: 100%;
 }
 
+.App-content {
+  display: flex;
+  flex-grow: 1;
+  width:100%;
+  flex-direction: row;
+  /*border: 1px solid red;*/
+}
 
+#chatContainer{
+  border: 1px solid brown;
+  width: 200px;
+}
 
-.navbar {
-  width: 100%;
+#phaser-game{
+  border: 1px solid cyan;
+  flex-grow: 1;
 }
 
 .main {
