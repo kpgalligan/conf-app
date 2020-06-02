@@ -2,13 +2,20 @@ import React from 'react'
 
 class Profile extends React.Component {
 
+    componentDidMount() {
+        this.setState({
+            state: this.state
+        })
+        
+    }
+
     state = {
         editMode: false,
         name: this.props.currentUser.name,
         email: this.props.currentUser.email,
         company: this.props.currentUser.company,
-        bio: this.props.currentUser.bio,
-        twitter_handle: this.props.currentUser.twitter_handle,
+        bio: this.props.currentUser.bio || "",
+        twitter_handle: this.props.currentUser.twitter_handle || "",
         image_url: this.props.currentUser.image_url,
     }
 
@@ -48,6 +55,9 @@ class Profile extends React.Component {
                 alert(response.errors)
             } else {
                 this.props.setCurrentUser(response)
+                this.setState({
+                    editMode: false
+                }, () => alert("Profile has been updated"))
             }
         })
     }
@@ -55,8 +65,10 @@ class Profile extends React.Component {
 
     render() {
 
+        console.log(this.state)
+
         return (
-            <div>
+            <div className="profile-body">
                 <h1>Profile Page</h1>
                 <img src={this.state.image_url} alt="profile"></img>
                 <h3>Name: {this.state.name}</h3>
