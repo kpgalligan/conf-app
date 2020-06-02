@@ -10,12 +10,15 @@ import Home from "./components/Home";
 import firebase from 'firebase/app';
 import 'firebase/auth';
 
+
+
 class App extends React.Component {
 
     state = {
         currentUser: null,
         readyForAuth: false
     }
+
 
     componentDidMount() {
         firebase.auth().onAuthStateChanged((user) => {
@@ -30,8 +33,6 @@ class App extends React.Component {
     }
 
     sendUserToDb = (user, credential) => {
-
-        console.log("Auth Result: ", user)
 
         fetch(`${process.env.REACT_APP_API_CALL}/start`, {
             method: "POST",
@@ -71,15 +72,18 @@ class App extends React.Component {
     }
 
     logout = () => {
+        
+        firebase.auth().signOut()
+
         this.setState({
                 currentUser: null
-            }, () => {
-                this.props.history.push("/home")
-            }
+            }, () => this.props.history.push("/")
         )
     }
 
     render() {
+
+        console.log(this.props)
 
         const username = this.state.currentUser ? this.state.currentUser.twitter_handle : ""
         const profileImage = this.state.currentUser ? this.state.currentUser.image_url : ""
@@ -96,6 +100,7 @@ class App extends React.Component {
                                     setCurrentUser={this.setCurrentUser}
                                     sendUserToDb={this.sendUserToDb}
                                     readyForAuth={this.state.readyForAuth}
+                                    ui={this.ui}
                                     logout={this.logout}/>}/>
                                 <Route path="/confgame" render={() => <GameInterface profileUsername={username} profileImage={profileImage}/>}/>}/>
                                 <Route path="/schedule" render={() => <Schedule/>}/>

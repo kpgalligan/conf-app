@@ -4,9 +4,9 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
-// import firebase from 'firebase'
-import firebase from 'firebase/app';
-import 'firebase/auth';
+import firebase from 'firebase'
+// import firebase from 'firebase/app';
+// import 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDw2cGjbXXA8Jax_vzsfzFFbTAeghYsd1Y",
@@ -24,7 +24,7 @@ firebase.initializeApp(firebaseConfig);
 ReactDOM.render(
   <React.StrictMode>
     <Router>
-      <Route path="/" component={App} />
+      <Route path="/" component={App} forceRefresh={true} />
     </Router>
   </React.StrictMode>,
   document.getElementById('root')
