@@ -4,16 +4,21 @@ import FirebaseAuth from "./FirebaseAuth";
 
 function Home(props) {
 
-    if(!props.currentUser && props.readyForAuth){
-        return (
-            <FirebaseAuth setCurrentUser={props.setCurrentUser} 
-                          sendUserToDb={props.sendUserToDb}
-                          />
-        )
-    } else {
-        return (
-            <MainMenu logout={props.logout}/>
-        )
+    if (props.readyForAuth){
+
+        if (!props.currentUser) {
+            return (
+                <FirebaseAuth setCurrentUser={props.setCurrentUser} 
+                              sendUserToDb={props.sendUserToDb} />
+            )
+        } else if (props.currentUser // && props.currentUser doesn't have an event
+        ) {
+            // show events
+        } else {
+            return (
+                <MainMenu logout={props.logout}/>
+            )
+        }
     }
 }
 
