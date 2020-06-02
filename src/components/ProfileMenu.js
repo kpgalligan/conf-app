@@ -21,6 +21,12 @@ class ProfileMenu extends React.Component {
         })
     }
 
+    signout = (e) => {
+        e.preventDefault()
+        this.props.logout()
+    }
+
+
 
     render () {
 
@@ -37,7 +43,7 @@ class ProfileMenu extends React.Component {
                     <>
                         <NavLink to="/profile" style={link}>Profile</NavLink>
                         <br></br>
-                        <button onClick={this.props.logout}>Log Out</button>
+                        <button onClick={this.signout}>Log Out</button>
                     </> : null
                 }
             </div>

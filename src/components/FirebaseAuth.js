@@ -33,15 +33,9 @@ class FirebaseAuth extends React.Component {
             }
           };
 
-          var ui = new firebaseui.auth.AuthUI(firebase.auth())
+          const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
           ui.start('#firebaseui-auth-container', uiConfig)
         
-          // setTimeout(() => {
-          //   // Initialize the FirebaseUI Widget using Firebase.
-          // var ui = new firebaseui.auth.AuthUI(firebase.auth());
-          // // The start method will wait until the DOM is loaded.
-          // ui.start('#firebaseui-auth-container', uiConfig);
-          // }, 5000) 
     }
 
     render () {
