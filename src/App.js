@@ -32,6 +32,10 @@ class App extends React.Component {
           });
     }
 
+    userProfileUrl(id) {
+        return `${process.env.REACT_APP_API_CALL}/image?id=${id}`
+    }
+
     sendUserToDb = (user, credential) => {
 
         fetch(`${process.env.REACT_APP_API_CALL}/start`, {
@@ -83,17 +87,15 @@ class App extends React.Component {
 
     render() {
 
-        console.log(this.props)
-
         const username = this.state.currentUser ? this.state.currentUser.twitter_handle : ""
         const profileImage = this.state.currentUser ? this.state.currentUser.image_url : ""
 
         return (
             <div className="App">
-                <header className="App-header">
-                    <div>
-                        <Router>
-                            <NavBar currentUser={this.state.currentUser} logout={this.logout}/>
+                <div className="App-body">
+                    <Router>
+                        <NavBar currentUser={this.state.currentUser} logout={this.logout}/>
+                        <div className="App-content">
                             <Switch>
                                 <Route exact path="/" render={() => <Home
                                     currentUser={this.state.currentUser}
@@ -102,19 +104,20 @@ class App extends React.Component {
                                     readyForAuth={this.state.readyForAuth}
                                     ui={this.ui}
                                     logout={this.logout}/>}/>
-                                <Route path="/confgame" render={() => <GameInterface profileUsername={username} profileImage={profileImage}/>}/>}/>
+                                <Route path="/confgame"
+                                       render={() => <GameInterface userProfileUrl={this.userProfileUrl} currentUser={this.state.currentUser}/>}/>}/>
                                 <Route path="/schedule" render={() => <Schedule/>}/>
                                 <Route path="/profile" render={() => <Profile history={this.props.history}
                                                                               currentUser={this.state.currentUser}
                                                                               setCurrentUser={this.setCurrentUser}/>}/>
                             </Switch>
-                        </Router>
-                    </div>
-                </header>
+                        </div>
+                    </Router>
+                </div>
             </div>
         );
 
-  }
+    }
 }
 
 export default withRouter(App);

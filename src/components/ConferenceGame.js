@@ -73,7 +73,7 @@ class WorldSceneCollide {
 
 class PlayerAndInfo {
     playerId;
-    profileUsername;
+    id;
     isMe;
     container;
     player;
@@ -81,9 +81,9 @@ class PlayerAndInfo {
     talkRadius;
     lastPlayerInfo;
 
-    constructor(playerId, profileUsername, isMe, container, player, chatBubble, talkRadius) {
+    constructor(playerId, id, isMe, container, player, chatBubble, talkRadius) {
         this.playerId = playerId;
-        this.profileUsername = profileUsername;
+        this.id = id;
         this.isMe = isMe
         this.container = container;
         this.player = player;
@@ -137,7 +137,6 @@ class WorldScene extends Phaser.Scene {
         this.stompClient.disconnect()
         clearInterval(this.movementTrackerIntervalId)
         this.sendTypingCallbacks.clear()
-        delete this.sendTypingCallbacks
         delete this.player
         delete this.container
         delete this.talkRadius
@@ -159,14 +158,14 @@ class WorldScene extends Phaser.Scene {
             worldKey: this.worldKey,
             playerX: playerX,
             playerY: playerY,
-            profileUsername: this.appContext.props.profileUsername,
-            profileImage: this.appContext.props.profileImage
+            id: this.appContext.props.currentUser.id
         }
     }
 
     sockJsConnect() {
         let socket = new SockJS('http://192.168.2.190:8080/gs-guide-websocket');
         this.stompClient = Stomp.over(socket)
+        this.stompClient.debug = function (){};
 
         // this.stompClient.debug = null
         let headers = this.connectHeaders(this.currentX, this.currentY);
@@ -374,11 +373,6 @@ class WorldScene extends Phaser.Scene {
         // don't go out of the map
         this.physics.world.bounds.width = this.map.widthInPixels;
         this.physics.world.bounds.height = this.map.heightInPixels;
-
-        this.sponsorRoom = this.make.tilemap({
-            key: "sponsorRoom"
-        });
-
 
         if (this.currentX === -10000) {
             const spawnPoint = this.map.filterObjects("Objects", (obj) => {
@@ -665,7 +659,7 @@ class WorldScene extends Phaser.Scene {
 
         const p = new PlayerAndInfo(
             playerInfo.playerId,
-            playerInfo.profileUsername,
+            playerInfo.id,
             true,
             this.container,
             this.player,
@@ -680,7 +674,7 @@ class WorldScene extends Phaser.Scene {
 
     addPlayerHead(container, playerInfo, chatBubble){
         const addHead = () => {
-            const icon = this.add.rexCircleMaskImage(0, -20, playerInfo.profileUsername)
+            const icon = this.add.rexCircleMaskImage(0, -20, playerInfo.playerId)
             icon.width = 20
             icon.height = 20
             container.add(icon)
@@ -688,15 +682,15 @@ class WorldScene extends Phaser.Scene {
             container.add(chatBubble)
         }
 
-        if (this.textures.exists(playerInfo.profileUsername)) {
+        if (this.textures.exists(playerInfo.playerId)) {
             addHead()
         } else {
-            let profileImage = playerInfo.profileImage
-            const loader = this.load.image(playerInfo.profileUsername, profileImage)
+            let profileImage = this.appContext.props.userProfileUrl(playerInfo.id)
+            const loader = this.load.image(playerInfo.playerId, profileImage)
             loader.start()
 
             loader.on('filecomplete', function (key, file) {
-                if (key === playerInfo.profileUsername) {
+                if (key === playerInfo.playerId) {
                     addHead()
                 }
             }, this);
@@ -748,7 +742,7 @@ class WorldScene extends Phaser.Scene {
         this.otherPlayers.add(container);
         const p = new PlayerAndInfo(
             playerInfo.playerId,
-            playerInfo.profileUsername,
+            playerInfo.id,
             false,
             container,
             otherPlayer,
@@ -921,11 +915,38 @@ class ConferenceGame extends Component {
         ]
     };
 
+    resizeTrigger = () => {
+        if(this.lastResizeCall)
+            clearTimeout(this.lastResizeCall)
+        this.lastResizeCall = setTimeout(() => this.resizeGameWindow(), 500)
+    };
+
     componentDidMount() {
         this.game = new Phaser.Game(this.config);
         this.props.sendMessageCallback.callback = (m)=>{
             callSendMessage(m)
         }
+
+        window.addEventListener("resize", this.resizeTrigger,false);
+        setTimeout(() => this.resizeGameWindow(), 200)
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener(this.resizeTrigger)
+    }
+
+    lastResizeCall = null
+
+    resizeGameWindow() {
+        let width = Math.max(500, window.innerWidth - 204);
+        let height = Math.max(500, window.innerHeight - 84);
+
+        console.log("resizing", width, height)
+
+        this.game.scale.resize(
+            width,
+            height
+        );
     }
 
     shouldComponentUpdate(nextProps) {
