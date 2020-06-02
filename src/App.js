@@ -15,6 +15,8 @@ import 'firebase/auth';
 class App extends React.Component {
 
     state = {
+        userEvents: [],
+        currentEvent: null,
         currentUser: null,
         readyForAuth: false
     }
@@ -69,11 +71,15 @@ class App extends React.Component {
     }
 
     setCurrentUser = (response) => {
+        console.log("RESPONSE: ", response)
         this.setState({
-                currentUser: response.user
+                currentUser: response.user,
+                userEvents: response.events
             }
         )
     }
+
+
 
     logout = () => {
         
@@ -86,6 +92,8 @@ class App extends React.Component {
     }
 
     render() {
+
+        console.log("APP STATE: ", this.state)
 
         const username = this.state.currentUser ? this.state.currentUser.twitter_handle : ""
         const profileImage = this.state.currentUser ? this.state.currentUser.image_url : ""
@@ -105,7 +113,7 @@ class App extends React.Component {
                                     ui={this.ui}
                                     logout={this.logout}/>}/>
                                 <Route path="/confgame"
-                                       render={() => <GameInterface userProfileUrl={this.userProfileUrl} currentUser={this.state.currentUser}/>}/>}/>
+                                       render={() => <GameInterface userProfileUrl={this.userProfileUrl} currentUser={this.state.currentUser}/>}/>
                                 <Route path="/schedule" render={() => <Schedule/>}/>
                                 <Route path="/profile" render={() => <Profile history={this.props.history}
                                                                               currentUser={this.state.currentUser}
