@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import ConferenceGame from "./ConferenceGame";
 import GameChat from "./GameChat";
+import Jitsi from "react-jitsi";
 
 /**
  * Ugly callback hook. I don't understand react yet.
@@ -16,7 +17,8 @@ class MessageCallback {
 class GameInterface extends Component {
     state = {
         talking: false,
-        chatMessages:[]
+        chatMessages:[],
+        videoChatRoomName: null
     }
 
     constructor() {
@@ -24,11 +26,23 @@ class GameInterface extends Component {
         this.sendMessageCallback = new MessageCallback()
     }
 
+    showVideoChat = (roomName) => {
+        this.setState({videoChatRoomName:roomName})
+        console.log("showVideoChat roomName", roomName)
+    }
+
+    hideVideoChat = () => {
+        this.setState({videoChatRoomName:null})
+        console.log("hideVideoChat")
+    }
+
     render() {
 
         return (
             <>
                 <ConferenceGame
+                    showVideoChat={this.showVideoChat}
+                    hideVideoChat={this.hideVideoChat}
                     currentUser={this.props.currentUser}
                     talking={this.state.talking}
                     userProfileUrl={this.props.userProfileUrl}
@@ -45,6 +59,7 @@ class GameInterface extends Component {
                         this.state.chatMessages.push({message: m, playerInfo: playerInfo})
                         this.setState({chatMessages: this.state.chatMessages})
                     }}
+                    videoChatRoomName={this.state.videoChatRoomName}
                 />
                 <GameChat
                     talking={this.state.talking}
@@ -63,6 +78,13 @@ class GameInterface extends Component {
                     chatMessages={this.state.chatMessages}
                     userProfileUrl={this.props.userProfileUrl}
                 />
+                {this.state.videoChatRoomName ?
+                    <div className="video_chat">
+                        <Jitsi
+                            containerStyle={{ width: '600px', height: '800px' }}
+                            roomName={this.state.videoChatRoomName} displayName={this.state.videoChatRoomName} />
+                    </div> : null
+                }
             </>
         )
     }

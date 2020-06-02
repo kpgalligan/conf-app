@@ -496,6 +496,8 @@ class WorldScene extends Phaser.Scene {
             }.bind(this), this)
         }*/
         this.addCollide(tableSprite, () => {
+            this.appContext.props.showVideoChat(obj.name)
+            this.container.onDoneTouching = () => this.appContext.props.hideVideoChat()
             // const chatApi = this.showChat(obj.name)
             // this.container.onDoneTouching = () => chatApi.executeCommand('hangup')
         })
@@ -915,13 +917,24 @@ class ConferenceGame extends Component {
         ]
     };
 
-    resizeTrigger = () => {
+    resizeGameWindow = () => {
+        const widthAdjust = this.props.videoChatRoomName ? 808 : 204
+        let width = Math.max(500, window.innerWidth - widthAdjust);
+        let height = Math.max(500, window.innerHeight - 84);
+
+        this.game.scale.resize(
+            width,
+            height
+        );
+    }
+
+    resizeTrigger = (timeout=500) => {
         if(this.lastResizeCall)
             clearTimeout(this.lastResizeCall)
-        this.lastResizeCall = setTimeout(() => this.resizeGameWindow(), 500)
+        this.lastResizeCall = setTimeout(() => this.resizeGameWindow(), timeout)
     };
 
-    componentDidMount() {
+    componentDidMount = () => {
         this.game = new Phaser.Game(this.config);
         this.props.sendMessageCallback.callback = (m)=>{
             callSendMessage(m)
@@ -937,19 +950,8 @@ class ConferenceGame extends Component {
 
     lastResizeCall = null
 
-    resizeGameWindow() {
-        let width = Math.max(500, window.innerWidth - 204);
-        let height = Math.max(500, window.innerHeight - 84);
-
-        console.log("resizing", width, height)
-
-        this.game.scale.resize(
-            width,
-            height
-        );
-    }
-
     shouldComponentUpdate(nextProps) {
+        this.resizeTrigger(50)
         if(this.game) {
             this.game.scene.getScenes(true).forEach((scene) => {
                 if (nextProps.talking && scene.imTalkin)
