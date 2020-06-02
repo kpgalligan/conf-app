@@ -65,3 +65,10 @@
 .video_chat {
   flex-grow: 2;
 }
+
+.profile-body {
+  background-color: #282c34;
+  width: inherit;
+  justify-content: center;
+  align-items: center;
+}

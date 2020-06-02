@@ -16,7 +16,7 @@ function NavBar(props) {
         return(
             <div className="navbar">
                 <NavLink to="/confgame" style={link}>Game</NavLink>
-                <NavLink to="/home" style={link}>Home</NavLink>
+                <NavLink to="/" style={link}>Home</NavLink>
                 <NavLink to="/schedule" style={link}>Schedule</NavLink>
                 <ProfileMenu currentUser={props.currentUser} logout={props.logout}/>
             </div>
