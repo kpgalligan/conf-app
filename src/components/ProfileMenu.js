@@ -40,7 +40,7 @@ class ProfileMenu extends React.Component {
                 {
                     this.state.displayMenu ? 
                     <>
-                        <a onClick={(e) => this.props.setPageInState(e, "profile")} style={link}>Profile</a>
+                        <a href="/profile" onClick={(e) => this.props.setPageInState(e, "profile")} style={link}>Profile</a>
                         <br></br>
                         <button onClick={(e) => this.signout(e)}>Log Out</button>
                     </> : null

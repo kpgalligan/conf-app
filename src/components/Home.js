@@ -28,8 +28,8 @@ class Home extends React.Component {
                     Other events you can attend:
                     <ul>
                         {
-                          this.props.allEvents.filter(event => !this.props.userEvents.find(e => e.id == event.id)).map(event => {
-                          return <li>{event.name}</li>
+                          this.props.allEvents.filter(event => !this.props.userEvents.find(e => e.id === event.id)).map(event => {
+                          return <li key={event.id}>{event.name}</li>
                           })
                         }
                     </ul>
