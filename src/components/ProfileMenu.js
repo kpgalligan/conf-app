@@ -1,5 +1,4 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
 
 const link = {
     width: '100px',
@@ -41,9 +40,9 @@ class ProfileMenu extends React.Component {
                 {
                     this.state.displayMenu ? 
                     <>
-                        <NavLink to="/profile" style={link}>Profile</NavLink>
+                        <a onClick={(e) => this.props.setPageInState(e, "profile")} style={link}>Profile</a>
                         <br></br>
-                        <button onClick={this.signout}>Log Out</button>
+                        <button onClick={(e) => this.signout(e)}>Log Out</button>
                     </> : null
                 }
             </div>

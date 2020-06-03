@@ -14,10 +14,18 @@
 
 .navbar {
   display: flex;
-  height: 80px;
+  height: 100px;
   flex-grow: 0;
   justify-content: space-around;
   width: 100%;
+}
+
+.navlink {
+  pointer-events: all;
+}
+
+.navlink:hover {
+  cursor: pointer;
 }
 
 .App-content {

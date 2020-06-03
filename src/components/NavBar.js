@@ -1,6 +1,5 @@
 import React from 'react'
 import ProfileMenu from './ProfileMenu'
-import { NavLink } from 'react-router-dom'
 
 const link = {
     width: '150px',
@@ -12,16 +11,17 @@ const link = {
 
 function NavBar(props) {
 
-    if(props.currentUser){
+    if (props.currentUser){
+
         return(
             <div className="navbar">
-                <NavLink to="/confgame" style={link}>Game</NavLink>
-                <NavLink to="/" style={link}>Home</NavLink>
-                <NavLink to="/schedule" style={link}>Schedule</NavLink>
-                <ProfileMenu currentUser={props.currentUser} logout={props.logout}/>
+                <a className="navlink" onClick={(e) => props.setPageInState(e, "game")} style={link}>Game</a>
+                <a className="navlink" onClick={(e) => props.setPageInState(e, "home")} style={link}>Home</a>
+                <a className="navlink" onClick={(e) => props.setPageInState(e, "schedule")} style={link}>Schedule</a>
+                <ProfileMenu currentUser={props.currentUser} logout={props.logout} setPageInState={props.setPageInState}/>
             </div>
         )
-    }else {
+    } else {
         return (<div className="navbar"/>)
     }
 
