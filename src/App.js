@@ -15,6 +15,7 @@ import 'firebase/auth';
 class App extends React.Component {
 
     state = {
+        allEvents: [],
         userEvents: [],
         currentEvent: null,
         currentUser: null,
@@ -32,6 +33,12 @@ class App extends React.Component {
                 })
             }
           });
+
+        fetch('http://localhost:3000/events')
+        .then(response => response.json())
+        .then(response => this.setState({
+            allEvents: response
+        }))
     }
 
     userProfileUrl(id) {
@@ -71,7 +78,7 @@ class App extends React.Component {
     }
 
     setCurrentUser = (response) => {
-        console.log("RESPONSE: ", response)
+        // console.log("RESPONSE: ", response)
         this.setState({
                 currentUser: response.user,
                 userEvents: response.events
@@ -110,6 +117,9 @@ class App extends React.Component {
                                     setCurrentUser={this.setCurrentUser}
                                     sendUserToDb={this.sendUserToDb}
                                     readyForAuth={this.state.readyForAuth}
+                                    currentEvent={this.state.currentEvent}
+                                    allEvents={this.state.allEvents}
+                                    userEvents={this.state.userEvents}
                                     ui={this.ui}
                                     logout={this.logout}/>}/>
                                 <Route path="/confgame"

@@ -24,7 +24,7 @@ firebase.initializeApp(firebaseConfig);
 ReactDOM.render(
   <React.StrictMode>
     <Router>
-      <Route path="/" component={App} forceRefresh={true} />
+      <Route path="/" component={App} />
     </Router>
   </React.StrictMode>,
   document.getElementById('root')
