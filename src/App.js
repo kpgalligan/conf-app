@@ -136,30 +136,16 @@ class App extends React.Component {
 
     render() {
 
-        console.log("APP STATE: ", this.state)
-
-        const username = this.state.currentUser ? this.state.currentUser.twitter_handle : ""
-        const profileImage = this.state.currentUser ? this.state.currentUser.image_url : ""
-
-    
-
         return (
             <div className="App">
                 <div className="App-body">
-                    
-                        <NavBar currentUser={this.state.currentUser} logout={this.logout} setPageInState={this.setPageInState}/>
-                        <div className="App-content">
-
+                    <NavBar currentUser={this.state.currentUser} logout={this.logout} setPageInState={this.setPageInState}/>
+                    <div className="App-content">
                         {this.pageLayout()}
-                       
-                
-                            
-                        </div>
-                    
+                    </div>
                 </div>
             </div>
         );
-
     }
 }
 

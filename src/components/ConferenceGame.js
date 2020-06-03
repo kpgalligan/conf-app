@@ -677,8 +677,12 @@ class WorldScene extends Phaser.Scene {
     addPlayerHead(container, playerInfo, chatBubble){
         const addHead = () => {
             const icon = this.add.rexCircleMaskImage(0, -20, playerInfo.playerId)
-            icon.width = 20
-            icon.height = 20
+            icon.width = 50
+            icon.height = 50
+            icon.setInteractive()
+            icon.on('pointerdown', () => {
+                this.appContext.props.showPlayerInfo(playerInfo.id)
+       });
             container.add(icon)
             container.remove(chatBubble)
             container.add(chatBubble)
@@ -703,6 +707,10 @@ class WorldScene extends Phaser.Scene {
         let container = this.add.container(playerInfo.x, playerInfo.y);
         container.setSize(32, 32);
         this.physics.world.enable(container);
+
+        container.on('pointerdown', function(){
+            console.log("--------Game - doing anything? ------")
+   });
 
         const otherPlayer = this.add.sprite(0, 0, 'player', 9);
         container.add(otherPlayer)

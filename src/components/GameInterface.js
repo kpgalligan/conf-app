@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import ConferenceGame from "./ConferenceGame";
 import GameChat from "./GameChat";
 import Jitsi from "react-jitsi";
+import ModalBox from "./ModalBox";
 
 /**
  * Ugly callback hook. I don't understand react yet.
@@ -14,11 +15,14 @@ class MessageCallback {
         this.callback(m)
     }
 }
+
 class GameInterface extends Component {
+
     state = {
         talking: false,
         chatMessages:[],
-        videoChatRoomName: null
+        videoChatRoomName: null,
+        showPlayerProfile: null
     }
 
     constructor() {
@@ -36,7 +40,24 @@ class GameInterface extends Component {
         console.log("hideVideoChat")
     }
 
+    showPlayerInfo = (playerId) => {
+        fetch(`${process.env.REACT_APP_API_CALL}/users/${playerId}`)
+        .then(response => response.json())
+        .then(response => this.setState({
+            showPlayerProfile: response
+        }))
+    }
+
+    stopShowingPlayerInfo = () => {
+        this.setState({
+            showPlayerProfile: null
+        })
+    }
+
+
     render() {
+
+        console.log(this.state.showPlayerProfile)
 
         return (
             <>
@@ -60,6 +81,7 @@ class GameInterface extends Component {
                         this.setState({chatMessages: this.state.chatMessages})
                     }}
                     videoChatRoomName={this.state.videoChatRoomName}
+                    showPlayerInfo={this.showPlayerInfo}
                 />
                 <GameChat
                     talking={this.state.talking}
@@ -85,6 +107,9 @@ class GameInterface extends Component {
                             roomName={this.state.videoChatRoomName} displayName={this.state.videoChatRoomName} />
                     </div> : null
                 }
+
+                { this.state.showPlayerProfile ? <ModalBox showPlayerProfile={this.state.showPlayerProfile} stopShowingPlayerInfo={this.stopShowingPlayerInfo}/> 
+                : null}
             </>
         )
     }

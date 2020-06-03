@@ -76,8 +76,8 @@ class Profile extends React.Component {
                 <h3>Bio: {this.state.bio}</h3>
                 <h3>Twitter Handle: {this.state.twitter_handle}</h3>
 
-                <button onClick={this.toggleEdit}>Update Profile</button>
-
+                {!this.state.editMode && <button onClick={this.toggleEdit}>Update Profile</button>}
+                
                 {
                     this.state.editMode ? 
                     

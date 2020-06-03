@@ -15,9 +15,9 @@ function NavBar(props) {
 
         return(
             <div className="navbar">
-                <a className="navlink" onClick={(e) => props.setPageInState(e, "game")} style={link}>Game</a>
-                <a className="navlink" onClick={(e) => props.setPageInState(e, "home")} style={link}>Home</a>
-                <a className="navlink" onClick={(e) => props.setPageInState(e, "schedule")} style={link}>Schedule</a>
+                <a href="/game" className="navlink" onClick={(e) => props.setPageInState(e, "game")} style={link}>Game</a>
+                <a href="/home" className="navlink" onClick={(e) => props.setPageInState(e, "home")} style={link}>Home</a>
+                <a href="/schedule" className="navlink" onClick={(e) => props.setPageInState(e, "schedule")} style={link}>Schedule</a>
                 <ProfileMenu currentUser={props.currentUser} logout={props.logout} setPageInState={props.setPageInState}/>
             </div>
         )
