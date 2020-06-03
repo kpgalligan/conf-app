@@ -1,7 +1,6 @@
 import React from 'react';
 import firebase from 'firebase';
 import * as firebaseui from 'firebaseui';
-import { withRouter } from "react-router-dom";
 
 class FirebaseAuth extends React.Component {
 
@@ -52,4 +51,4 @@ class FirebaseAuth extends React.Component {
     
 }
 
-export default withRouter(FirebaseAuth)
+export default FirebaseAuth

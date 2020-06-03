@@ -1,11 +1,9 @@
 import React from 'react';
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import './App.css';
 import NavBar from './components/NavBar';
 import Profile from './components/Profile';
 import Schedule from './components/Schedule';
 import GameInterface from "./components/GameInterface";
-import {withRouter} from "react-router-dom";
 import Home from "./components/Home";
 import firebase from 'firebase/app';
 import 'firebase/auth';
@@ -19,7 +17,8 @@ class App extends React.Component {
         userEvents: [],
         currentEvent: null,
         currentUser: null,
-        readyForAuth: false
+        readyForAuth: false,
+        page: "home"
     }
 
 
@@ -89,13 +88,50 @@ class App extends React.Component {
 
 
     logout = () => {
-        
+        console.log("Logging out")
         firebase.auth().signOut()
 
         this.setState({
-                currentUser: null
-            }, () => this.props.history.push("/")
+                currentUser: null,
+                page: "home"
+            }
         )
+    }
+
+    pageLayout = () =>  {
+
+        if (this.state.page === "home") {
+            return <Home
+            currentUser={this.state.currentUser}
+            setCurrentUser={this.setCurrentUser}
+            sendUserToDb={this.sendUserToDb}
+            readyForAuth={this.state.readyForAuth}
+            currentEvent={this.state.currentEvent}
+            allEvents={this.state.allEvents}
+            userEvents={this.state.userEvents}
+            ui={this.ui}
+            logout={this.logout}/>
+        } 
+        if (this.state.page === "game") {
+            return <GameInterface userProfileUrl={this.userProfileUrl} currentUser={this.state.currentUser}/>
+        }
+
+        if (this.state.page === "schedule") {
+            return <Schedule/>
+        }
+
+        if (this.state.page === "profile") {
+            return <Profile history={this.props.history}
+            currentUser={this.state.currentUser}
+            setCurrentUser={this.setCurrentUser}/>
+        }
+    } 
+
+    setPageInState = (e, targetPage) => {
+        e.preventDefault()
+        this.setState({
+            page: targetPage
+        })
     }
 
     render() {
@@ -105,32 +141,21 @@ class App extends React.Component {
         const username = this.state.currentUser ? this.state.currentUser.twitter_handle : ""
         const profileImage = this.state.currentUser ? this.state.currentUser.image_url : ""
 
+    
+
         return (
             <div className="App">
                 <div className="App-body">
-                    <Router>
-                        <NavBar currentUser={this.state.currentUser} logout={this.logout}/>
+                    
+                        <NavBar currentUser={this.state.currentUser} logout={this.logout} setPageInState={this.setPageInState}/>
                         <div className="App-content">
-                            <Switch>
-                                <Route exact path="/" render={() => <Home
-                                    currentUser={this.state.currentUser}
-                                    setCurrentUser={this.setCurrentUser}
-                                    sendUserToDb={this.sendUserToDb}
-                                    readyForAuth={this.state.readyForAuth}
-                                    currentEvent={this.state.currentEvent}
-                                    allEvents={this.state.allEvents}
-                                    userEvents={this.state.userEvents}
-                                    ui={this.ui}
-                                    logout={this.logout}/>}/>
-                                <Route path="/confgame"
-                                       render={() => <GameInterface userProfileUrl={this.userProfileUrl} currentUser={this.state.currentUser}/>}/>
-                                <Route path="/schedule" render={() => <Schedule/>}/>
-                                <Route path="/profile" render={() => <Profile history={this.props.history}
-                                                                              currentUser={this.state.currentUser}
-                                                                              setCurrentUser={this.setCurrentUser}/>}/>
-                            </Switch>
+
+                        {this.pageLayout()}
+                       
+                
+                            
                         </div>
-                    </Router>
+                    
                 </div>
             </div>
         );
@@ -138,4 +163,4 @@ class App extends React.Component {
     }
 }
 
-export default withRouter(App);
+export default App

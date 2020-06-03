@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { BrowserRouter as Router, Route } from 'react-router-dom'
 import firebase from 'firebase'
 // import firebase from 'firebase/app';
 // import 'firebase/auth';
@@ -22,11 +21,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Router>
-      <Route path="/" component={App} />
-    </Router>
-  </React.StrictMode>,
+  <App />,
   document.getElementById('root')
 );
 
