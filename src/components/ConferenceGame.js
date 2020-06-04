@@ -926,8 +926,7 @@ class ConferenceGame extends Component {
     };
 
     resizeGameWindow = () => {
-        const widthAdjust = this.props.videoChatRoomName ? 808 : 204
-        let width = Math.max(500, window.innerWidth - widthAdjust);
+        let width = Math.max(500, window.innerWidth - 204);
         let height = Math.max(500, window.innerHeight - 84);
 
         this.game.scale.resize(
@@ -953,7 +952,7 @@ class ConferenceGame extends Component {
     }
 
     componentWillUnmount() {
-        window.removeEventListener(this.resizeTrigger)
+        window.removeEventListener("resize", this.resizeTrigger, false)
     }
 
     lastResizeCall = null
