@@ -3,6 +3,7 @@ import ConferenceGame from "./ConferenceGame";
 import GameChat from "./GameChat";
 import Jitsi from "react-jitsi";
 import ModalBox from "./ModalBox";
+import VideoChatModal from "./VideoChatModal";
 
 /**
  * Ugly callback hook. I don't understand react yet.
@@ -54,7 +55,6 @@ class GameInterface extends Component {
         })
     }
 
-
     render() {
 
         console.log(this.state.showPlayerProfile)
@@ -80,7 +80,6 @@ class GameInterface extends Component {
                         this.state.chatMessages.push({message: m, playerInfo: playerInfo})
                         this.setState({chatMessages: this.state.chatMessages})
                     }}
-                    videoChatRoomName={this.state.videoChatRoomName}
                     showPlayerInfo={this.showPlayerInfo}
                 />
                 <GameChat
@@ -100,13 +99,8 @@ class GameInterface extends Component {
                     chatMessages={this.state.chatMessages}
                     userProfileUrl={this.props.userProfileUrl}
                 />
-                {this.state.videoChatRoomName ?
-                    <div className="video_chat">
-                        <Jitsi
-                            containerStyle={{ width: '600px', height: '800px' }}
-                            roomName={this.state.videoChatRoomName} displayName={this.state.videoChatRoomName} />
-                    </div> : null
-                }
+
+                {this.state.videoChatRoomName ? <VideoChatModal hideVideoChat={this.hideVideoChat} videoChatRoomName={this.state.videoChatRoomName}/> : null}
 
                 { this.state.showPlayerProfile ? <ModalBox showPlayerProfile={this.state.showPlayerProfile} stopShowingPlayerInfo={this.stopShowingPlayerInfo}/> 
                 : null}
