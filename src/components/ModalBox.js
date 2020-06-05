@@ -3,29 +3,15 @@ import Modal from 'react-modal';
 
 class ModalBox extends React.Component {
    
-      state = {
-        showModal: true
-      };
-      
-    
-    handleOpenModal = () => {
-      this.setState({ 
-        showModal: true 
-      });
-    }
-    
     handleCloseModal = () => {
-      this.setState({ 
-        showModal: false 
-      }, () => this.props.stopShowingPlayerInfo());
+      this.props.stopShowingPlayerInfo();
     }
     
     render () {
       return (
         <div>
-          {/* <button onClick={this.handleOpenModal}>Trigger Modal</button> */}
           <Modal 
-             isOpen={this.state.showModal}
+             isOpen={this.props.showPlayerProfile ? true : false}
              ariaHideApp={false}
              shouldCloseOnEsc={true}
              style={
@@ -51,22 +37,14 @@ class ModalBox extends React.Component {
               } }}
              contentLabel="Player Info" >
                
-            <div>
-              { this.props.showPlayerProfile.name }
-            </div> 
-             
-            <div> 
-             { this.props.showPlayerProfile.company || null }
-            </div><br></br>
-
-            <div>
-             { this.props.showPlayerProfile.bio || null }
-            </div><br></br>
-
-            <div>
-             { this.props.showPlayerProfile.image_url ? <img src={this.props.showPlayerProfile.image_url} height="250px" width="250px" alt="user"></img>
-              : null }
-            </div>
+               {this.props.showPlayerProfile ? 
+                <>
+                  <div> { this.props.showPlayerProfile.name } </div> 
+                  <div> { this.props.showPlayerProfile.company || null } </div><br></br>
+                  <div> { this.props.showPlayerProfile.bio || null } </div><br></br>
+                  <div> { this.props.showPlayerProfile.image_url ? <img src={this.props.showPlayerProfile.image_url} height="250px" width="250px" alt="user"></img> : null }</div>
+                </>
+                : null}
             
             <button onClick={this.handleCloseModal}>Close</button>
           </Modal>
