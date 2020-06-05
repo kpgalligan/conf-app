@@ -1,6 +1,7 @@
 import React from 'react'
 import MainMenu from "./mainMenu";
 import FirebaseAuth from "./FirebaseAuth";
+import { Typography } from "@material-ui/core"
 
 class Home extends React.Component {
 
@@ -16,7 +17,7 @@ class Home extends React.Component {
              else if (this.props.currentUser && !this.props.currentEvent) {
                return (
                 <div>
-                    Your Events:
+                    <Typography variant="h3">Your Events:</Typography>
                     <ul>
                     {
                         this.props.userEvents.map(event => {
@@ -24,8 +25,7 @@ class Home extends React.Component {
                             })
                     }
                     </ul>
-
-                    Other events you can attend:
+                    <Typography variant="h3">Other events you can attend:</Typography>
                     <ul>
                         {
                           this.props.allEvents.filter(event => !this.props.userEvents.find(e => e.id === event.id)).map(event => {

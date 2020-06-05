@@ -102,8 +102,7 @@ class GameInterface extends Component {
 
                 {this.state.videoChatRoomName ? <VideoChatModal hideVideoChat={this.hideVideoChat} videoChatRoomName={this.state.videoChatRoomName}/> : null}
 
-                { this.state.showPlayerProfile ? <ModalBox showPlayerProfile={this.state.showPlayerProfile} stopShowingPlayerInfo={this.stopShowingPlayerInfo}/> 
-                : null}
+                <ModalBox showPlayerProfile={this.state.showPlayerProfile} stopShowingPlayerInfo={this.stopShowingPlayerInfo}/> 
             </>
         )
     }
