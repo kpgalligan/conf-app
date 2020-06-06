@@ -40,6 +40,11 @@ class BootScene extends Phaser.Scene {
             frameHeight: 24
         });
 
+        this.load.audio('clunk', [
+            'assets/audio/clunk.ogg',
+            'assets/audio/clunk.mp3'
+        ]);
+
         this.load.audio('mario', [
             'assets/audio/mario2.ogg',
             'assets/audio/mario2.mp3'
@@ -222,6 +227,10 @@ class WorldScene extends Phaser.Scene {
                 let sentMessage = JSON.parse(msg.body)
                 const playerInfo = this.allPlayers[sentMessage.playerId]
 
+                this.clunk.play({
+                    loop: false
+                });
+
                 this.appContext.props.showMessage(
                     sentMessage,
                     playerInfo)
@@ -295,11 +304,15 @@ class WorldScene extends Phaser.Scene {
 
     create(data) {
         this.input.keyboard.on('keydown', event => {
-            switch (event.key) {
-                case ' ':
-                    this.appContext.props.startTalking()
-                    break;
-                default:
+            if(
+                (event.key && event.key.length === 1) &&
+                (
+                    (event.key >= 'a' && event.key <= 'z') ||
+                    (event.key >= 'A' && event.key <= 'Z') ||
+                    event.key === ' '
+                )
+            ){
+                this.appContext.props.startTalking(event.key)
             }
         });
 
@@ -311,6 +324,10 @@ class WorldScene extends Phaser.Scene {
 
         if (!this.danceMusic) {
             this.danceMusic = this.sound.add('dance');
+        }
+
+        if (!this.clunk) {
+            this.clunk = this.sound.add('clunk');
         }
 
         //Enable for music
@@ -881,53 +898,55 @@ class WorldScene extends Phaser.Scene {
 }
 
 class ConferenceGame extends Component {
-    config = {
-        type: Phaser.AUTO,
-        parent: "phaser-game",
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 1050, // Canvas width in pixels
-        height: 800, // Canvas height in pixels
-        // zoom: 2,
-        pixelArt: true,
-        physics: {
-            default: 'arcade',
-            arcade: {
+    generateConfig = () => {
+        return {
+            type: Phaser.AUTO,
+                parent: "phaser-game",
+            mode: Phaser.Scale.FIT,
+            autoCenter: Phaser.Scale.CENTER_BOTH,
+            width: 1050, // Canvas width in pixels
+            height: 800, // Canvas height in pixels
+            // zoom: 2,
+            pixelArt: true,
+            physics: {
+        default: 'arcade',
+                arcade: {
                 gravity: {
                     y: 0
                 },
                 debug: true // set to true to view zones
             }
         },
-        scene: [
-            BootScene,
-            new WorldScene(
-                "firstWorld",
-                "map",
-                false,
-                this),
-            new WorldScene(
-                "chatWorld",
-                "chatRoomMap",
-                false,
-                this),
-            new WorldScene(
-                "secretRoom",
-                "secretRoomMap",
-                false,
-                this),
-            new WorldScene(
-                "vipRoom",
-                "vipRoomMap",
-                false,
-                this)
+            scene: [
+                BootScene,
+                new WorldScene(
+                    "firstWorld",
+                    "map",
+                    false,
+                    this),
+                new WorldScene(
+                    "chatWorld",
+                    "chatRoomMap",
+                    false,
+                    this),
+                new WorldScene(
+                    "secretRoom",
+                    "secretRoomMap",
+                    false,
+                    this),
+                new WorldScene(
+                    "vipRoom",
+                    "vipRoomMap",
+                    false,
+                    this)
 
-        ]
-    };
+            ]
+        }
+    }
 
     resizeGameWindow = () => {
-        let width = Math.max(500, window.innerWidth - 204);
-        let height = Math.max(500, window.innerHeight - 84);
+        let width = Math.max(500, window.innerWidth - 354);
+        let height = Math.max(500, window.innerHeight - 90);
 
         this.game.scale.resize(
             width,
@@ -942,7 +961,7 @@ class ConferenceGame extends Component {
     };
 
     componentDidMount = () => {
-        this.game = new Phaser.Game(this.config);
+        this.game = new Phaser.Game(this.generateConfig());
         this.props.sendMessageCallback.callback = (m)=>{
             callSendMessage(m)
         }
@@ -953,6 +972,7 @@ class ConferenceGame extends Component {
 
     componentWillUnmount() {
         window.removeEventListener("resize", this.resizeTrigger, false)
+        this.game.destroy()
     }
 
     lastResizeCall = null

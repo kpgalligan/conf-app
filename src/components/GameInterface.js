@@ -20,7 +20,7 @@ class MessageCallback {
 class GameInterface extends Component {
 
     state = {
-        talking: false,
+        talkingStart: null,
         chatMessages:[],
         videoChatRoomName: null,
         showPlayerProfile: null
@@ -57,23 +57,21 @@ class GameInterface extends Component {
 
     render() {
 
-        console.log(this.state.showPlayerProfile)
-
         return (
             <>
                 <ConferenceGame
                     showVideoChat={this.showVideoChat}
                     hideVideoChat={this.hideVideoChat}
                     currentUser={this.props.currentUser}
-                    talking={this.state.talking}
+                    talking={this.state.talkingStart != null}
                     userProfileUrl={this.props.userProfileUrl}
-                    startTalking={()=>{
-                        if(!this.state.talking)
-                            this.setState({talking:true})
+                    startTalking={(start)=>{
+                        if(this.state.talkingStart == null)
+                            this.setState({talkingStart:start})
                     }}
                     cancelTalking={()=>{
-                        if(this.state.talking)
-                            this.setState({talking:false})
+                        if(this.state.talkingStart != null)
+                            this.setState({talkingStart:null})
                     }}
                     sendMessageCallback={this.sendMessageCallback}
                     showMessage={(m, playerInfo) => {
@@ -83,15 +81,16 @@ class GameInterface extends Component {
                     showPlayerInfo={this.showPlayerInfo}
                 />
                 <GameChat
-                    talking={this.state.talking}
-                    imTalkin={() => {
+                    talking={this.state.talkingStart != null}
+                    talkingStart={this.state.talkingStart}
+                    /*imTalkin={() => {
                         this.setState({
-                            talking: true
+                            talkingStart: ''
                         })
-                    }}
+                    }}*/
                     imNotTalkin={() => {
                         this.setState({
-                            talking: false
+                            talkingStart: null
                         })
                     }}
                     currentUser={this.props.currentUser}
