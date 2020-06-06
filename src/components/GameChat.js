@@ -1,5 +1,7 @@
 import React, {Component} from "react";
 import {AutoSizer, List} from "react-virtualized";
+import TextField from "@material-ui/core/TextField";
+import {Box} from "@material-ui/core";
 
 class GameChat extends Component {
     state = {
@@ -10,17 +12,19 @@ class GameChat extends Component {
         const commentString = document.getElementById("commentString")
         if (commentString) {
             if (this.props.talking)
-                setTimeout(() => commentString.focus(), 200)
+                setTimeout(() => commentString.focus(), 2)
             else
-                setTimeout(() => commentString.blur(), 200)
+                setTimeout(() => commentString.blur(), 2)
         }
 
         const rowRenderer = ({index, isScrolling, key, style}) => {
             const imgUrl = this.props.userProfileUrl(this.props.chatMessages[index].playerInfo.id)
             return (
-                <div key={key} style={style}>
+                <div key={key}>
+                    <Box>
                     <img src={imgUrl} alt="player"/>
                     {this.props.chatMessages[index].message.message}
+                    </Box>
                 </div>
             );
         };
@@ -33,7 +37,7 @@ class GameChat extends Component {
                             return (
                                 <List
                                     rowCount={this.props.chatMessages.length}
-                                    width={200}
+                                    width={340}
                                     height={height}
                                     rowHeight={100}
                                     rowRenderer={rowRenderer}
@@ -46,13 +50,13 @@ class GameChat extends Component {
 
                     </AutoSizer>
                 </div>
-                <input
+                <TextField
                     id="commentString"
-                    disabled={!this.props.talking}
                     name="commentString"
-                    placeholder="Type here..."
-                    type="text"
-                    onFocus={this.props.imTalkin}
+                    label="Comment"
+                    variant="outlined"
+                    disabled={!this.props.talking}
+                    onFocus={this.inputFocus}
                     onBlur={this.inputBlur}
                     value={this.state.commentString}
                     onKeyDown={this._handleKeyDown}
@@ -71,6 +75,13 @@ class GameChat extends Component {
             }
             e.target.blur()
         }
+    }
+
+    inputFocus = () => {
+        this.setState({
+            commentString: this.props.talkingStart
+        })
+        // this.props.imTalkin()
     }
 
     inputBlur = () => {

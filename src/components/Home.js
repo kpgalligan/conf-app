@@ -2,6 +2,7 @@ import React from 'react'
 import MainMenu from "./mainMenu";
 import FirebaseAuth from "./FirebaseAuth";
 import { Typography } from "@material-ui/core"
+import Button from '@material-ui/core/Button';
 
 class Home extends React.Component {
 
@@ -33,6 +34,9 @@ class Home extends React.Component {
                           })
                         }
                     </ul>
+                    <Button variant="contained" color="primary">
+                        Hello World
+                    </Button>
                 </div>
                )
     
