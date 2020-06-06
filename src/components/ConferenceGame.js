@@ -303,6 +303,10 @@ class WorldScene extends Phaser.Scene {
     }
 
     create(data) {
+        console.log("WorldScene create", data)
+
+        this.appContext.currentScene = this
+
         this.input.keyboard.on('keydown', event => {
             if(
                 (event.key && event.key.length === 1) &&
@@ -443,8 +447,7 @@ class WorldScene extends Phaser.Scene {
     }
 
     makeWorldChangeBox(sb) {
-        // const group = this.physics.add.staticGroup()
-        const sbBox = this.physics.add.staticSprite(sb.x + 16, sb.y + 16)/*(sb.x + (sb.width/2), sb.y + (sb.height/2))*/
+        const sbBox = this.physics.add.staticSprite(sb.x + 16, sb.y + 16)
         sbBox.setSize(sb.width, sb.height);
         // this.physics.world.enable(sbBox);
         this.addCollide(sbBox, () => {
@@ -487,8 +490,6 @@ class WorldScene extends Phaser.Scene {
             textObject.visible = true
             this.container.onDoneTouching = () => textObject.visible = false
         })
-
-
     }
 
     makeSponsorBox(sb) {
@@ -506,17 +507,10 @@ class WorldScene extends Phaser.Scene {
         let tableSprite = playTable.create(obj.x, obj.y, "tv", 0)
         tableSprite.anims.play('tv_playing', true);
         tableSprite.setInteractive();
-        /*if (obj.name) {
-            tableSprite.on("pointerdown", function () {
-                console.log("tv fuckers 2", obj)
-                this.showChat(obj.name)
-            }.bind(this), this)
-        }*/
+
         this.addCollide(tableSprite, () => {
             this.appContext.props.showVideoChat(obj.name)
             this.container.onDoneTouching = () => this.appContext.props.hideVideoChat()
-            // const chatApi = this.showChat(obj.name)
-            // this.container.onDoneTouching = () => chatApi.executeCommand('hangup')
         })
     }
 
@@ -865,28 +859,6 @@ class WorldScene extends Phaser.Scene {
         this.scene.start(key);
     }
 
-    /*showChat(key) {
-        let meetDiv = document.getElementById('meet');
-        meetDiv.innerHTML = ""
-        meetDiv.style.display = ""
-        const domain = 'meet.jit.si';
-        const options = {
-            invitees: [],
-            roomName: key,
-            configOverwrite: {
-                disableInviteFunctions: true
-            },
-            width: 600,
-            height: 450,
-            parentNode: document.querySelector('#meet')
-        };
-        const api = new JitsiMeetExternalAPI(domain, options);
-        api.addEventListener("readyToClose", () => {
-            meetDiv.style.display = "none"
-        });
-        return api
-    }*/
-
     backWorld() {
         if (!this.isDone) {
             this.isDone = true
@@ -944,6 +916,8 @@ class ConferenceGame extends Component {
         }
     }
 
+    currentScene = null
+
     resizeGameWindow = () => {
         let width = Math.max(500, window.innerWidth - 354);
         let height = Math.max(500, window.innerHeight - 90);
@@ -972,6 +946,9 @@ class ConferenceGame extends Component {
 
     componentWillUnmount() {
         window.removeEventListener("resize", this.resizeTrigger, false)
+        if(this.currentScene)
+            this.currentScene.shutDown()
+
         this.game.destroy()
     }
 
@@ -1002,39 +979,7 @@ let callSendMessage = (message) => {
     console.log("Can't send now: " + message)
 }
 
-// function showMessage(message) {
-//     const messageSpan = document.getElementById("messageSpan")
-//     messageSpan.innerText = message
-//     messageSpan.style.display = "block"
-//     setTimeout(() => messageSpan.style.display = "none", 3000)
-// }
-
-
-
-
-
 let worldStack = []
-// const twitterUsernames = [
-//     "kpgalligan",
-//     "TouchlabHQ",
-//     "miss_cheese",
-//     "chislett",
-//     "treelzebub",
-//     "chethaase",
-//     "jessewilson",
-//     "dN0t"
-// ]
-
-// function firstPause(func, pauseTime) {
-//     let lastCall = 0
-//     return function () {
-//         let now = Date.now();
-//         if (now - lastCall > pauseTime) {
-//             lastCall = now
-//             func()
-//         }
-//     }
-// }
 
 function smooth(func, pauseTime) {
     let lastCallTime = 0
