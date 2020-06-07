@@ -76,15 +76,15 @@
                  "y":1146.33
                 }, 
                 {
-                 "height":38.6666666666667,
+                 "height":38.6667,
                  "id":289,
                  "name":"Chat Room >",
                  "rotation":0,
                  "type":"TextSign",
                  "visible":true,
-                 "width":33.3332666666663,
-                 "x":1182.66333333333,
-                 "y":700.000333333333
+                 "width":33.3333,
+                 "x":1182.66,
+                 "y":700
                 }, 
                 {
                  "height":104.667,
@@ -109,7 +109,7 @@
                  "y":1179.67
                 }, 
                 {
-                 "height":25.3333333333333,
+                 "height":25.3333,
                  "id":294,
                  "name":"vipRoom",
                  "properties":[
@@ -121,9 +121,21 @@
                  "rotation":0,
                  "type":"WorldChange",
                  "visible":true,
-                 "width":41.3333333333333,
+                 "width":41.3333,
                  "x":156,
                  "y":844
+                }, 
+                {
+                 "height":0,
+                 "id":295,
+                 "name":"Vip 1",
+                 "point":true,
+                 "rotation":0,
+                 "type":"ChatNode",
+                 "visible":true,
+                 "width":0,
+                 "x":493.333333333333,
+                 "y":989.333333333333
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -132,7 +144,7 @@
          "y":0
         }],
  "nextlayerid":6,
- "nextobjectid":295,
+ "nextobjectid":296,
  "orientation":"orthogonal",
  "properties":[
         {

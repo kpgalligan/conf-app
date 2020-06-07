@@ -63,6 +63,7 @@ class GameInterface extends Component {
                     showVideoChat={this.showVideoChat}
                     hideVideoChat={this.hideVideoChat}
                     currentUser={this.props.currentUser}
+                    currentEvent={this.props.currentEvent}
                     talking={this.state.talkingStart != null}
                     userProfileUrl={this.props.userProfileUrl}
                     startTalking={(start)=>{
