@@ -99,6 +99,13 @@ class App extends React.Component {
         )
     }
 
+    selectCurrentEvent = (event) => {
+        this.setState({
+            currentEvent:event,
+            page: "game"
+        })
+    }
+
     pageLayout = () => {
 
         if (this.state.page === "home") {
@@ -108,6 +115,7 @@ class App extends React.Component {
                 sendUserToDb={this.sendUserToDb}
                 readyForAuth={this.state.readyForAuth}
                 currentEvent={this.state.currentEvent}
+                selectCurrentEvent={this.selectCurrentEvent}
                 allEvents={this.state.allEvents}
                 userEvents={this.state.userEvents}
                 ui={this.ui}
@@ -163,6 +171,7 @@ class App extends React.Component {
                 <div className="App">
                     <div className="App-body">
                         <NavBar currentUser={this.state.currentUser}
+                                currentEvent={this.state.currentEvent}
                                 pageName={this.pageName(this.state.page)}
                                 logout={this.logout}
                                 setPageInState={this.setPageInState}/>

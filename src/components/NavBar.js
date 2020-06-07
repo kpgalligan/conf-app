@@ -67,7 +67,7 @@ function NavBar(props) {
                         <MenuIcon/>
                     </IconButton>
                     <Typography variant="h6" className={classes.title}>
-                        {props.pageName}
+                        {props.currentEvent ? props.currentEvent.name : props.pageName}
                     </Typography>
                     {props.currentUser && (
                         <>
@@ -79,22 +79,26 @@ function NavBar(props) {
                             >
                                 <Home/>
                             </IconButton>
-                            <IconButton
-                                aria-label="account of current user"
-                                aria-controls="menu-appbar"
-                                onClick={() => props.setPageInState("game")}
-                                color="inherit"
-                            >
-                                <Group/>
-                            </IconButton>
-                            <IconButton
-                                aria-label="account of current user"
-                                aria-controls="menu-appbar"
-                                onClick={() => props.setPageInState("schedule")}
-                                color="inherit"
-                            >
-                                <Schedule/>
-                            </IconButton>
+                            {props.currentEvent && (
+                                <>
+                                    <IconButton
+                                        aria-label="account of current user"
+                                        aria-controls="menu-appbar"
+                                        onClick={() => props.setPageInState("game")}
+                                        color="inherit"
+                                    >
+                                        <Group/>
+                                    </IconButton>
+                                    <IconButton
+                                        aria-label="account of current user"
+                                        aria-controls="menu-appbar"
+                                        onClick={() => props.setPageInState("schedule")}
+                                        color="inherit"
+                                    >
+                                        <Schedule/>
+                                    </IconButton>
+                                </>
+                            )}
                             <Typography variant="h6" className={classes.userName}>{props.currentUser.name}</Typography>
                             <IconButton
                                 aria-label="account of current user"

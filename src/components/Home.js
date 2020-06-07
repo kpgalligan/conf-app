@@ -22,7 +22,7 @@ class Home extends React.Component {
                     <ul>
                     {
                         this.props.userEvents.map(event => {
-                        return  <li key={event.id}>{event.name}</li>
+                        return  <li key={event.id}>{event.name} <Button onClick={()=>this.props.selectCurrentEvent(event)}>Select</Button></li>
                             })
                     }
                     </ul>
@@ -30,7 +30,7 @@ class Home extends React.Component {
                     <ul>
                         {
                           this.props.allEvents.filter(event => !this.props.userEvents.find(e => e.id === event.id)).map(event => {
-                          return <li key={event.id}>{event.name}</li>
+                          return <li key={event.id}>{event.name} <Button onClick={()=>this.props.selectCurrentEvent(event)}>Select</Button></li>
                           })
                         }
                     </ul>
