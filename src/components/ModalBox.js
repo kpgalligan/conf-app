@@ -48,8 +48,7 @@ function ModalBox(props) {
                         : null}
 
                 <Button
-                    variant="contained"
-                    color="primary"
+                    variant="outlined"
                     onClick={() => props.stopShowingPlayerInfo()}
                 >
                     Close
