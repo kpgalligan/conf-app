@@ -122,7 +122,11 @@ class App extends React.Component {
                 logout={this.logout}/>
         }
         if (this.state.page === "game") {
-            return <GameInterface userProfileUrl={this.userProfileUrl} currentUser={this.state.currentUser}/>
+            return <GameInterface
+                userProfileUrl={this.userProfileUrl}
+                currentUser={this.state.currentUser}
+                currentEvent={this.state.currentEvent}
+            />
         }
 
         if (this.state.page === "schedule") {

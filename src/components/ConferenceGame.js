@@ -154,6 +154,7 @@ class WorldScene extends Phaser.Scene {
 
     worldKeyHeader() {
         return {
+            eventId: this.appContext.props.currentEvent.id,
             worldKey: this.worldKey
         }
     }
@@ -161,6 +162,7 @@ class WorldScene extends Phaser.Scene {
     connectHeaders(playerX, playerY) {
         return {
             worldKey: this.worldKey,
+            eventId: this.appContext.props.currentEvent.id,
             playerX: playerX,
             playerY: playerY,
             id: this.appContext.props.currentUser.id
@@ -177,7 +179,10 @@ class WorldScene extends Phaser.Scene {
         this.stompClient.connect(headers, function (frame) {
             this.stompUserId = frame['headers']['user-name']
 
-            this.stompClient.subscribe('/user/topic/currentPlayers/' + this.worldKey, (msg) => {
+            console.log("this.appContext.props.currentEvent", this.appContext.props.currentEvent)
+            this.stompClient.subscribe('/user/topic/currentPlayers/' +
+                this.appContext.props.currentEvent.id + '/' +
+                this.worldKey, (msg) => {
                 let players = JSON.parse(msg.body)
                 Object.keys(players).forEach((id) => {
                     if (players[id].playerId === this.stompUserId) {
@@ -188,13 +193,17 @@ class WorldScene extends Phaser.Scene {
                 })
             })
 
-            this.stompClient.subscribe('/topic/newPlayer/' + this.worldKey, (msg) => {
+            this.stompClient.subscribe('/topic/newPlayer/' +
+                this.appContext.props.currentEvent.id + '/' +
+                this.worldKey, (msg) => {
                 let playerInfo = JSON.parse(msg.body)
                 this.storePlayerInfo(this.addOtherPlayers(playerInfo))
             })
 
             //Can't we just remove by key?
-            this.stompClient.subscribe('/topic/disconnect/' + this.worldKey, (msg) => {
+            this.stompClient.subscribe('/topic/disconnect/' +
+                this.appContext.props.currentEvent.id + '/' +
+                this.worldKey, (msg) => {
                 let playerId = msg.body
                 let player = this.allPlayers[playerId]
                 if (player) {
@@ -203,7 +212,9 @@ class WorldScene extends Phaser.Scene {
                 }
             })
 
-            this.stompClient.subscribe('/topic/playerMoved/' + this.worldKey, (msg) => {
+            this.stompClient.subscribe('/topic/playerMoved/' +
+                this.appContext.props.currentEvent.id + '/' +
+                this.worldKey, (msg) => {
                 let playerMovementContainer = JSON.parse(msg.body)
                 if (playerMovementContainer.clientId === this.stompUserId)
                     return
@@ -223,7 +234,9 @@ class WorldScene extends Phaser.Scene {
                 }
             })
 
-            this.stompClient.subscribe('/user/topic/hearMessage/' + this.worldKey, (msg) => {
+            this.stompClient.subscribe('/user/topic/hearMessage/' +
+                this.appContext.props.currentEvent.id + '/' +
+                this.worldKey, (msg) => {
                 let sentMessage = JSON.parse(msg.body)
                 const playerInfo = this.allPlayers[sentMessage.playerId]
 
@@ -240,7 +253,9 @@ class WorldScene extends Phaser.Scene {
                 this.stompClient.send("/app/sendMessage", this.worldKeyHeader(), message)
             }
 
-            this.stompClient.subscribe('/topic/playerTyping/' + this.worldKey, function (msg) {
+            this.stompClient.subscribe('/topic/playerTyping/' +
+                this.appContext.props.currentEvent.id + '/' +
+                this.worldKey, function (msg) {
                 let playerId = msg.body
                 let player = this.allPlayers[playerId]
                 if (player && !player.isMe) {
@@ -248,7 +263,9 @@ class WorldScene extends Phaser.Scene {
                 }
             }.bind(this));
 
-            this.stompClient.subscribe('/topic/playerDoneTyping/' + this.worldKey, function (msg) {
+            this.stompClient.subscribe('/topic/playerDoneTyping/' +
+                this.appContext.props.currentEvent.id + '/' +
+                this.worldKey, function (msg) {
                 let playerId = msg.body
                 let player = this.allPlayers[playerId]
                 if (player && !player.isMe) {
